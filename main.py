@@ -2,7 +2,7 @@ import wx
 import pystray
 
 from PIL import Image
-from ui.options import OptionsFrame
+from src.ui.options import OptionsFrame
 
 APP_TITLE = 'Google Photos Wallpaper'
 
