@@ -8,14 +8,9 @@ class OptionsFrame(wx.Frame):
 
 		panel = wx.Panel(self)
 
-		text = wx.StaticText(panel, label='Hello world')
-		font = text.GetFont()
-		font.PointSize += 10
-		font = font.Bold()
-		text.SetFont(font)
-
-		sizer = wx.BoxSizer(wx.VERTICAL)
-		sizer.Add(text, wx.SizerFlags().Border(wx.TOP|wx.LEFT, 25))
+		sign_in_button = wx.Button(panel, label='Sign in with Google')
+		
+		
 
 		# self.makeMenuBar()
 
