@@ -13,13 +13,10 @@ def open_ui():
 	frm.Show()
 	app.MainLoop()
 
-# Open automatically for testing
-open_ui()
-
 # Create system tray icon
 icon = pystray.Icon('test name')
 icon.title = APP_TITLE
-icon.icon = Image.open('icon.png')
+icon.icon = Image.open('src/icon.png')
 icon.menu = pystray.Menu(
 	pystray.MenuItem(
 		text = 'Options',
@@ -28,4 +25,6 @@ icon.menu = pystray.Menu(
 	)
 )
 
+# Open automatically for testing
+open_ui()
 # icon.run()
