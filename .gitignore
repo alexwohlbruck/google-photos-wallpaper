@@ -1,5 +1,5 @@
 .vscode/
 env/
 __pycache__
-config.py
 client_secrets.json
+*.ini
