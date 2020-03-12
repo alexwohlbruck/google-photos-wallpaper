@@ -96,7 +96,4 @@ class GoogleApi():
             }
         }
 
-        favorites = cls.photos.mediaItems().search(body = body).execute()
-
-        print(favorites)
-
+        return cls.photos.mediaItems().search(body = body).execute()

@@ -1,6 +1,8 @@
 import webbrowser
 import os
 import wx
+import random
+import urllib.request
 
 from src.google_api import GoogleApi
 
@@ -20,18 +22,28 @@ class OptionsFrame(wx.Frame):
 
 		# self.makeMenuBar()
 
+		self.favorites = None
+
 
 	def sign_in(self, event):
 
-		GoogleApi.get_favorites()
+		self.favorites = GoogleApi.get_favorites()
 
 
 	def set_wallpaper(self, event):
-		# Set wallpaper
-		import ctypes
-		SPI = 20
-		SPIF = 2
-		ctypes.windll.user32.SystemParametersInfoW(SPI, 0, 'C:/Users/alexw/Downloads/test.jpg', SPIF)
+		
+		if (self.favorites):
+
+			# Pick random photo from favorites
+			image_url = random.choice(self.favorites['mediaItems'])['baseUrl']
+			urllib.request.urlretrieve(image_url, "wall.jpg")
+			path = os.path.abspath("wall.jpg")
+
+			# Set wallpaper
+			import ctypes
+			SPI = 20
+			SPIF = 2
+			ctypes.windll.user32.SystemParametersInfoW(SPI, 0, path, SPIF)
 
 	"""
 	def makeMenuBar(self):

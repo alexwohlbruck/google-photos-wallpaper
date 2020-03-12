@@ -26,5 +26,5 @@ icon.menu = pystray.Menu(
 )
 
 # Open automatically for testing
-open_ui()
-# icon.run()
+# open_ui()
+icon.run()
