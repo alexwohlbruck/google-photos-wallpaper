@@ -2,16 +2,7 @@ import webbrowser
 import os
 import wx
 
-# import google.oauth2.credentials
-# from oauthlib.oauth2 import WebApplicationClient
-
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
-from google_auth_oauthlib.flow import Flow
-from google_auth_oauthlib.flow import InstalledAppFlow
-
-from src.config import Config
-config = Config()
+from src.google_api import GoogleApi
 
 class OptionsFrame(wx.Frame):
 	# Main options GUI
@@ -27,75 +18,12 @@ class OptionsFrame(wx.Frame):
 		set_wallpaper_button = wx.Button(panel, label='Set wallpaper', pos=(0, 30))
 		self.Bind(wx.EVT_BUTTON, self.set_wallpaper, set_wallpaper_button)
 
-		refresh_token = config.get_config('google_oauth', 'refresh_token')
-		if refresh_token:
-			print(refresh_token)
-
 		# self.makeMenuBar()
-
-
 
 
 	def sign_in(self, event):
 
-		flow = InstalledAppFlow.from_client_secrets_file(
-			os.path.abspath('src/client_secrets.json'),
-			scopes = [
-				'openid',
-				'https://www.googleapis.com/auth/userinfo.email',
-				'https://www.googleapis.com/auth/photoslibrary.readonly'
-			],
-			redirect_uri = 'urn:ietf:wg:oauth:2.0:oob:auto'
-		)
-
-		flow.run_local_server(
-			host = 'localhost',
-			port = 8080,
-			authorization_prompt_message = 'Please visit this URL: {url}',
-			success_message = 'Signed in sucsessfully, you may close this window.',
-			open_browser = True
-		)
-
-
-		# Save refresh token in config
-		config.set_config('google_oauth', 'refresh_token', flow.credentials.refresh_token)
-
-		service = build('photoslibrary', 'v1', credentials = flow.credentials)
-
-		body = {
-			'filters': {
-				'featureFilter': {
-					'includedFeatures': ['FAVORITES']
-				}
-			}
-		}
-
-		favorites = service.mediaItems().search(body = body).execute()
-
-
-
-		""" 
-		# You can use flow.credentials, or you can just get a requests session
-		# using flow.authorized_session.
-		session = flow.authorized_session()
-
-
-		favorites = session.post(
-			'https://photoslibrary.googleapis.com/v1/mediaItems:search',
-			json = {
-				'filters': {
-					'featureFilter': {
-						'includedFeatures': ['FAVORITES']
-					}
-				}
-			}
-		).json()
-
-		# print(favorites)
-		 """
-
-
-
+		GoogleApi.get_favorites()
 
 
 	def set_wallpaper(self, event):

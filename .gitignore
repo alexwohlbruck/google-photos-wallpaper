@@ -3,3 +3,4 @@ env/
 __pycache__
 client_secrets.json
 *.ini
+token.pickle
