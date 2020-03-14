@@ -7,9 +7,7 @@ from google_auth_oauthlib.flow import Flow
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-
-from src.config import Config
-config = Config()
+PICKLE_PATH = 'storage/token.pickle'
 
 def deco(cls):
     """
@@ -19,8 +17,8 @@ def deco(cls):
 
     # Open Oauth credentials from stored file
     creds = None
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
+    if os.path.exists(PICKLE_PATH):
+        with open(PICKLE_PATH, 'rb') as token:
             cls.creds = pickle.load(token)
             cls.build_services(cls.creds)
 
@@ -71,7 +69,7 @@ class GoogleApi():
                 )
 
             # Save new credentials
-            with open('token.pickle', 'wb') as token:
+            with open(PICKLE_PATH, 'wb') as token:
                 pickle.dump(cls.creds, token)
 
             cls.build_services(cls.creds)
@@ -93,7 +91,8 @@ class GoogleApi():
                 'featureFilter': {
                     'includedFeatures': ['FAVORITES']
                 }
-            }
+            },
+            'pageSize': 100
         }
 
         return cls.photos.mediaItems().search(body = body).execute()

@@ -9,9 +9,10 @@ APP_TITLE = 'Google Photos Wallpaper'
 app = wx.App()
 
 def open_ui():
-	frm = OptionsFrame(None, title = APP_TITLE, size = wx.Size(550, 700), pos = wx.Point(900,300))
-	frm.Show()
-	app.MainLoop()
+	if __name__ == '__main__':
+		app = wx.App()
+		frame = OptionsFrame()
+		app.MainLoop()
 
 # Create system tray icon
 icon = pystray.Icon('test name')
@@ -26,5 +27,5 @@ icon.menu = pystray.Menu(
 )
 
 # Open automatically for testing
-# open_ui()
-icon.run()
+open_ui()
+# icon.run()
