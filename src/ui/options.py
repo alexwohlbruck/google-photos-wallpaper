@@ -39,15 +39,15 @@ class OptionsPanel(wx.Panel):
 		sign_in_button = wx.Button(self, label='Sign in with Google')
 		self.Bind(wx.EVT_BUTTON, self.sign_in, sign_in_button)
 
-		set_wallpaper_button = wx.Button(self, label='Set wallpaper')
-		self.Bind(wx.EVT_BUTTON, self.set_wallpaper, set_wallpaper_button)
+		# set_wallpaper_button = wx.Button(self, label='Set wallpaper')
+		# self.Bind(wx.EVT_BUTTON, self.set_wallpaper, set_wallpaper_button)
 
 		thumb = TC.ThumbnailCtrl(self, imagehandler = TC.PILImageHandler)
 		thumb.ShowDir(os.path.join(os.getcwd(), 'storage/thumbs'))
 
 		# Add widgets to sizer
 		self.mainSizer.Add(sign_in_button, 0)
-		self.mainSizer.Add(set_wallpaper_button, 0)
+		# self.mainSizer.Add(set_wallpaper_button, 0)
 		# self.layout.Add(thumb, 500, wx.EXPAND)
 
 		self.SetSizer(self.mainSizer)
@@ -61,21 +61,23 @@ class OptionsPanel(wx.Panel):
 	def sign_in(self, event):
 
 		self.favorites = GoogleApi.get_favorites()
+		self.download_images()
 
 	
 	def show_thumbs(self):
-		print('show thumbs')
-		thumb = TC.ThumbnailCtrl(self, imagehandler = TC.PILImageHandler)
-		thumb.ShowDir(os.path.join(os.getcwd(), 'storage/thumbs'))
-		
-		self.mainSizer.Add(thumb, 0, wx.EXPAND, wx.EXPAND)
-		self.mainSizer.Update()
+		# thumb = TC.ThumbnailCtrl(self,imagehandler = TC.PILImageHandler, size = (-1, wx.EXPAND))
+		# thumb.ShowDir(os.path.join(os.getcwd(), 'storage/thumbs'))
+		# self.mainSizer.Add(thumb, 0, wx.EXPAND)
+		self.Layout()
 
-	def set_wallpaper(self, event):
+	def set_image(self, e):
+		print('clicked')
+
+	def download_images(self):
 
 		if (self.favorites):
 			MAX_SIZE = '16383'
-			THUMB_SIZE = '50'
+			THUMB_SIZE = '100'
 
 			# Pick random photo from favorites
 			image_url = random.choice(self.favorites['mediaItems'])['baseUrl']
@@ -85,15 +87,23 @@ class OptionsPanel(wx.Panel):
 			# urllib.request.urlretrieve(image_url, 'storage/wall.jpg')
 			# path = os.path.abspath('storage/wall.jpg')
 
-			# for i, thumb in enumerate(self.favorites['mediaItems']):
-			# 	image_url = thumb['baseUrl']
-			# 	image_url += '=w' + THUMB_SIZE + '-h' + THUMB_SIZE
 
-			# 	urllib.request.urlretrieve(image_url,
-			# 		'storage/thumbs/' + thumb.get('filename', 'thumb' + str(i) + '.jpg')
-			# 	)
+			gridSizer = wx.GridSizer(5, 20, 5)
+			self.mainSizer.Add(gridSizer, 0, wx.EXPAND)
+
+			for i, thumb in enumerate(self.favorites['mediaItems']):
+				image_url = thumb['baseUrl']
+				image_url += '=w' + THUMB_SIZE + '-h' + THUMB_SIZE
+				path = 'storage/thumbs/' + thumb.get('filename', 'thumb' + str(i) + '.jpg')
+
+				urllib.request.urlretrieve(image_url, path)
+				bitmap = wx.Bitmap(path, wx.BITMAP_TYPE_ANY)
+				image = wx.StaticBitmap(self, bitmap = bitmap, size = (bitmap.GetWidth(), bitmap.GetHeight()))
+				gridSizer.Add(image, 0,wx.EXPAND)
+				self.Layout()
 			
-			self.show_thumbs()
+			
+			# self.show_thumbs()
 
 			# # Set wallpaper
 			# import ctypes

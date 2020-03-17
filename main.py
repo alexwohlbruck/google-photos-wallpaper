@@ -1,18 +1,16 @@
-import wx
+import eel
+from PIL import Image
 import pystray
 
-from PIL import Image
-from src.ui.options import OptionsFrame
-
 APP_TITLE = 'Google Photos Wallpaper'
-
-app = wx.App()
-
+	
 def open_ui():
-	if __name__ == '__main__':
-		app = wx.App()
-		frame = OptionsFrame()
-		app.MainLoop()
+	eel.init('src/web')
+	eel.start('main.html')
+
+@eel.expose
+def test(a):
+	print(a)
 
 # Create system tray icon
 icon = pystray.Icon('test name')
@@ -26,6 +24,5 @@ icon.menu = pystray.Menu(
 	)
 )
 
-# Open automatically for testing
 open_ui()
 # icon.run()
