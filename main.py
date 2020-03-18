@@ -3,14 +3,12 @@ from PIL import Image
 import pystray
 
 APP_TITLE = 'Google Photos Wallpaper'
+
+import src.bridge
 	
 def open_ui():
-	eel.init('src/web')
-	eel.start('main.html')
-
-@eel.expose
-def test(a):
-	print(a)
+	eel.init('web')
+	eel.start('index.html')
 
 # Create system tray icon
 icon = pystray.Icon('test name')
