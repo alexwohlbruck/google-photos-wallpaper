@@ -8,8 +8,12 @@ import src.bridge
 	
 def open_ui():
 	eel.init('web')
-	eel.start('index.html')
+	eel.start('index.html', port=8686)
 
+@eel.expose
+def my_python_function(a, b):
+    print(a, b, a + b)
+	
 # Create system tray icon
 icon = pystray.Icon('test name')
 icon.title = APP_TITLE
