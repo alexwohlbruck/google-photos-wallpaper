@@ -1,5 +1,6 @@
 import pickle
 import os
+import eel
 
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -37,7 +38,11 @@ class GoogleApi():
 
     creds = None
     photos = None
-    
+
+    @classmethod
+    def is_authenicated(cls):
+        return cls.creds and cls.creds.valid
+
     @classmethod
     def ensure_valid_token(cls):
         
@@ -47,7 +52,7 @@ class GoogleApi():
         """
 
         # If credentials aren't stored or have expired
-        if not cls.creds or not cls.creds.valid:
+        if not cls.is_authenicated():
 
             # Expired, get new access token
             if cls.creds and cls.creds.expired and cls.creds.refresh_token:

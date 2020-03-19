@@ -3,15 +3,17 @@ from PIL import Image
 import pystray
 
 APP_TITLE = 'Google Photos Wallpaper'
+
+import src.bridge
 	
 def open_ui():
-	eel.init('src/web')
-	eel.start('main.html')
+	eel.init('web')
+	eel.start('index.html', port=8686)
 
 @eel.expose
-def test(a):
-	print(a)
-
+def my_python_function(a, b):
+    print(a, b, a + b)
+	
 # Create system tray icon
 icon = pystray.Icon('test name')
 icon.title = APP_TITLE

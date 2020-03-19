@@ -1,0 +1,8 @@
+{
+  "name": "google-photos-wallpaper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/alexwohlbruck/google-photos-wallpaper.git",
+  "author": "Alex Wohlbruck <alexwohlbruck@gmail.com>",
+  "license": "MIT"
+}
