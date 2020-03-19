@@ -1,6 +1,7 @@
 .vscode/
 env/
 __pycache__
+node_modules
 
 # Google API config
 client_secrets.json
