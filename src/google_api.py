@@ -88,9 +88,7 @@ class GoogleApi():
 
     @classmethod
     def get_favorites(cls):
-
         cls.ensure_valid_token()
-
         body = {
             'filters': {
                 'featureFilter': {
@@ -99,5 +97,17 @@ class GoogleApi():
             },
             'pageSize': 100
         }
+        return cls.photos.mediaItems().search(body = body).execute()
 
+    @classmethod
+    def get_albums(cls):
+        cls.ensure_valid_token()
+        return cls.photos.albums().list().execute()
+
+    @classmethod
+    def get_album_media_items(cls, album_id):
+        cls.ensure_valid_token()
+        body = {
+            'albumId': album_id
+        }
         return cls.photos.mediaItems().search(body = body).execute()

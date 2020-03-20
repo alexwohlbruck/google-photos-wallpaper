@@ -28,8 +28,21 @@
 
         //- Album selection
         h3.subtitle-1.font-weight-bold.ma-3 Selected albums
-        v-expansion-panels.albums(accordion)
-          v-expansion-panel(v-for='album in albums' :key='album.id')
+        v-expansion-panels.albums(accordion multiple)
+
+          //- Favorites panel
+          v-expansion-panel
+            v-expansion-panel-header.py-0(v-slot='open')
+              v-layout
+                v-checkbox(label='Favorites')
+            
+            v-expansion-panel-content
+              v-row
+                v-col.pa-1(cols='3' sm='2' md='1' v-for='mediaItem in favorites' :key='mediaItem.id')
+                  v-card(@click='setWallpaper(mediaItem)')
+                    v-img(:src='mediaItem.baseUrl' aspect-ratio='1')
+
+          v-expansion-panel(v-for='album in albums' :key='album.id' @change='loadAlbum(album.id)')
 
             //- Album list            
             v-expansion-panel-header.py-0(v-slot='open')
@@ -38,23 +51,51 @@
             
             //- Album image content
             v-expansion-panel-content
-              v-row
-                v-col.pa-1(cols='3' sm='2' md='1' v-for='image in mediaItems' :key='image.id')
-                  v-card(@click='setWallpaper(image.baseUrl)')
-                    v-img(:src='image.baseUrl' aspect-ratio='1')
+              v-skeleton-loader(type='image' v-if='!album.mediaItems')
+                  
+              v-row(v-if='album.mediaItems')
+                v-col.pa-1(cols='3' sm='2' md='1' v-for='mediaItem in album.mediaItems' :key='mediaItem.id')
+                  v-card(@click='setWallpaper(mediaItem)')
+                    v-img(:src='mediaItem.baseUrl' aspect-ratio='1')
 </template>
 
 <script>
 
 export default {
   name: 'App',
+  mounted() {
+    window.eel.get_favorites()(({ mediaItems }) => {
+      this.$data.favorites = mediaItems;
+    })
+
+    window.eel.get_albums()(({ albums }) => {
+      console.log(albums);
+      this.$data.albums= albums;
+    })
+  },
   methods: {
-    preventExpansion: event => {
+    preventExpansion: function(event) {
       event.cancelBubble = true;
     },
-    setWallpaper: imageUrl => {
-      window.eel.my_python_function(1,2)
-      window.eel.set_wallpaper(imageUrl)
+    loadAlbum: function(albumId) {
+      window.eel.get_album_media_items(albumId)(({ mediaItems }) => {
+        console.log(mediaItems);
+        this.albums = this.albums.map(album => {
+          if (album.id == albumId) {
+            album.mediaItems = mediaItems;
+          }
+          return album;
+        })
+      })
+    },
+    setWallpaper: function(mediaItem) {
+      // const MAX_SIZE = 16383;
+      let url = mediaItem.baseUrl;
+      url += `=w${mediaItem.mediaMetadata.width}-h${mediaItem.mediaMetadata.height}`;
+      window.eel.set_wallpaper(url)(() => {
+        // Finished setting wallpaper
+        // TODO: Add loading indicator while downloading image
+      })
     }
   },
   data: () => ({
@@ -63,80 +104,8 @@ export default {
       { text: 'Favorites' },
       { text: 'DSC_1028.jpg' }
     ],
-    "albums": [
-      {
-        "id": "APyYgs4Aonbbs62ZRY8LLF6kj-OFqmxvkE45ivf6SeR7AP-7z0ahqlZ4Uad1XHew3GVqb4bAF4QS-qrNPgOzrXXDi8r-6Zggfw",
-        "title": "Sophomore Year🍦",
-        "productUrl": "https://photos.google.com/lr/album/APyYgs4Aonbbs62ZRY8LLF6kj-OFqmxvkE45ivf6SeR7AP-7z0ahqlZ4Uad1XHew3GVqb4bAF4QS-qrNPgOzrXXDi8r-6Zggfw",
-        "mediaItemsCount": "1451",
-        "coverPhotoBaseUrl": "https://lh3.googleusercontent.com/lr/AGWb-e6DCbtgEpApMaKWCA8wBQQdzAioL1B6eC2IGsOrNaXPJlwPsPLgzRU8blVSU-6R3RcrbfNEqBVrF-kGBblqmR8ppx1N51QR0vq1lI-SJVr83ZFmyZK5yeWC6gxc-hTM77giZTBhKE1YwxGVFW-qDCOGBmPDnoYiejrYcnfMpxoHIJkNrEYUjSGIsmxukUXzLTDo2wznnVDNEFDQXzloSSveXGS2FCXX8XQmn-JB1KawKMSXqEt1ZjRejSnaWnwDYg6eFVRPb2DxH83RYGMapnxfL8fEJ0Xp97cjKcsaGBLZcyf5EyejHlfmvlIFKLPPqaNHg78qeDiYa-OCrvbVoXJu5F95LvECB-2qcvFjBtKFSyhVRxLs_ZyoFAfedjSCTjfxGU2M5NnbAA1Zk79sIBJ9LpnaalOedNmX7iEwA1JozVvyWWp2zjWAlWrUUgruG7KYAogyCrNqhQRlIq9P4z7bPNCLcL9MkFr3WU74wj269SDnhToOaZVOEXRas2u_BMB7sVGBAmt_deeHP2NAD6OwvfKDkWtuJ25ZW4VP-z89FEXnK5GLuAW5E39jJqW1NQEZ0yPY4DG3pUjdFDgPc0Rp1Ad6MNbfm86v7X9amIC1drR91itdCLLUAPVmYL1P4GyVEYnWIbUeQ1-WYWilCO0Ks_MKMLyJFtWeahH5NqJpg8nPad5CrqfqH7zSTY7qhcq3eD_GOFgzYFshlWMCE_cSNYcn2zproCEvmLJuB0c-FpqFsAi-gYqfUAkLZJVl8aXalqeRbHZAjQMGKkPW7QQ",
-        "coverPhotoMediaItemId": "APyYgs5ZDIOMQJK4ra7HIYIixSqOM1-Df7EwWs0U2hQRpjXwiB7Wv03FjwqVdF1T5o3glbh5KXYy"
-      },
-      {
-        "id": "APyYgs7xwjIdFD-1iYfWYYt7c2WFJfcidtDibmqq5LGI_EFhat5n4WmCelDbR24YYjM8Y52WqwnS",
-        "title": "gaze",
-        "productUrl": "https://photos.google.com/lr/album/APyYgs7xwjIdFD-1iYfWYYt7c2WFJfcidtDibmqq5LGI_EFhat5n4WmCelDbR24YYjM8Y52WqwnS",
-        "mediaItemsCount": "2",
-        "coverPhotoBaseUrl": "https://lh3.googleusercontent.com/lr/AGWb-e6HYbLoL7ivca1E1qzBuJ6oBwy72eUm4T9qfdi7Be19EvceR4-zU9yFpy-DzrsyDIltLwUHZbtEn9K_yICEkgVlsnd5rJ8OQZMvPRUGMj6cfOz-2N6iY9nvwc9WyIm6-VnWjpu4QfqQdOjK5Hzb0raWG46CkL5stQVfyftSQel99JsJwQ_NzIhreyWSez-TpkdHHCoPHzQH5MIXZ_0-coMJ_TEvyXOYHgXe-HNJ-pkyKkGxsGDXkt5VFvw2r0HjMy9e7Gmz6O1P-dQJ7HdQfQ0YjA15Kr2psXOz4kJBUNT2sCrAno_xhxyAJmlWXlBGuCAKzlZEVhb4e_3S5j7xxYNG45KA5HbBI9JXm9vxrs6p5RgBJN89vHp3nRUqXrYVlKmjU1Z3qne7Qwql3-i6XkXqS240C2dnWiN8ePaqZI7B9hIyi1tPrQDtsGip4dOPAq7E3DsreY2LgdyDPVGrNlSfPM6XkeZaQD4AZT1nBF-lWMmQhTHQh-uvfhouHsoyxsgFmT8T_By_agCNIGN4e6wzMAcp9Jra-wHYEBGZAfiRGbcxk1SdnuIZ8ufWG1rMnqxa3f7YfaOAKWR0ZrU8Zd9zyhZJjchuYEUHPCScU5-4hhK3RAD7r3y1m0gMViCMOy626lkNl1V4L2-gTjQQwSXjufpcNeukyZfHEQBaMwvH72dMISE3AONA5nhzvbS0Nap0jNYFGIZI9TRgVjHC2QPZLIp-rFCL5BWn0FQuO7DLEI-UzzaVG9VndkC4QN1fDer5Qz7RO3uHGBx3Eagc558",
-        "coverPhotoMediaItemId": "APyYgs7WA-NMeOnuxEkZWaIaFFpH3FDwU5zZXUVgI_BovDwB0f2T3NMoEKrE7T9eLMxCHqze5EG0UqBnU5BVoRfEDVrApjex6A"
-      },
-      {
-        "id": "APyYgs4_9b-tf7QDApRKtnY_7eqIZA7asSHPjeIdZf-ohETutRkB0x4JrmsL6oo8V4-F3Ywoy4_p",
-        "title": "The bird",
-        "productUrl": "https://photos.google.com/lr/album/APyYgs4_9b-tf7QDApRKtnY_7eqIZA7asSHPjeIdZf-ohETutRkB0x4JrmsL6oo8V4-F3Ywoy4_p",
-        "mediaItemsCount": "48",
-        "coverPhotoBaseUrl": "https://lh3.googleusercontent.com/lr/AGWb-e54DYTrKPTKNjGu2UaqNAavZLS_h5y7O9yxd4htOwywVYWCu_uYsGG4FSQ62kGcM6m1tafyvwboUFe2WNYBYRUOw5LK2BMYM763JmPtCfxOgin0460W2ynVPNjKco7semcZlfpuQrtfH38f63ulOYuBU1ISgoX76iaurnf_EY1E3aUPOSrynzT1_dFXXxAgcIyw4RZWquUcY9sFOKlzEa4VP1etxSOkmsZ5_jfXYD5gCqybcTCexOC2zoAqiceOUeniGYWmposatZLhWkSgtEA6azZWIfAsm0202yU_i4GJ5PtEP7o4Ka_TDWG4Dl95p30zyeuD0s2L74DSLhen5cR-lKT61EGWerqNPbyQRiZRNYM_Z1DzMWuQZ2sOWJCOOXNA9mqN3jHVf4C3Ss2Pcc4Upoy06lxz8UcD68IDVBY6j5B54eqg7seRAZTNOKMyErC_0_g0dyTUw5Uf8ahFBu9BjydCp8exzsGCjc7jY-r4ymHQ70NeiLTuVFi3Kc9qR98E3td9HSkxZ9yZVJiC-9xpTToy95SzIKCyqNdTGF83pHbZlD-NV5z3NE5oYYlM07Wno4ExcjZmWjD7o3B4eqjLAPjYSUeK3BF2MNANqbLKqblJAe3UFnZTX_vB3VOGu_ZaYs98ZP_UgeSzZ5q-pZiPTKfAu02WAdoGOU-lK_nTZxp9KN4Azi6tQRpYZrfb6Cja4-KXcV5vaEhHwBb_s9LD3vKu9dUSHy95H3ehrLAWroEODBHVmSBLF9ZJkEaOXhoZGGBKYF6RU7P-8B_PfRY",
-        "coverPhotoMediaItemId": "APyYgs5g3mBJeIVwgSJS0AU8jPfx89QbD7MfQBM4F5FLbqWJNHNhWpawVSrgSVgkFunSjMzH9SLDc8F1EBQH5CxPMd0CvkFSbQ"
-      },
-      {
-        "id": "APyYgs73cUHZPewLDsmO7uYaNfkJPBHFEYu3S-H_dxsXPO9wmuTBOBnbFGTphBfcL-MLjPA1GhBd",
-        "title": "prints",
-        "productUrl": "https://photos.google.com/lr/album/APyYgs73cUHZPewLDsmO7uYaNfkJPBHFEYu3S-H_dxsXPO9wmuTBOBnbFGTphBfcL-MLjPA1GhBd",
-        "mediaItemsCount": "16",
-        "coverPhotoBaseUrl": "https://lh3.googleusercontent.com/lr/AGWb-e4shHw7y-M5_zGTAdYvN4I4Ts0WyWYon47yiwQ9qWLoRt09dmM-ZXTozPPFaEaEV4xiCmmM08uEfuT85-egySz88LCa5MueWp2CAvdHVKmlp6zcpVMowjW3C2dfnCs66YlQ5Fckm5GEYS95LQ3OASHkYbAv-J1HeATgv-3dxu_CzT8-tb_OGm01Tlx47EjW1xFFizuPU5fODNlMhVP__U0hCd9b7nPFiiSGu1Dvurs9XbgV6UMUqDupV2CIvBRuwQLPN7GaT18IBk34X-I58j0IXyDJk9w3wOzEpdLDSvzFQSANCBPFdfSYgOSh0fFrpbj1-r5ycYkaLSYF7gfeiYK49qfKjBudja-_2CxbT6vwh3triFjr9aKN0ufQdqRYRRf89P11VfYwrjdbkcm9u641m8r4W9PRAS40Z5t0xPHuJuWPd0eCTIqt5IViJQm5AQ7YnNxFe5DzBsVJygba-86bJwyyghmb0ifCrAwwFUK-eFr0F1w3F3dgLwGYrEDR3IT1GQdVGaZJqVQe7WkkXVSLxp8uL2kvHZ0MY8INdiHGQYEP-lLB3lrr3vztp5VsEIyUt_eyt_kfZGUjlYCRNf66lEkayhq2jBSY0OsjYPMX4Q07wWgPF3EDnh-qib6mbrWfiuVbuF8ga4xNi5WSMtE6gM3YeqMHT1C800m4NnWV9zI6YhpytVTET-F0rLMV1Oaxrh5MSO34hb1ja6s1f9emsT_wDmTF4SmEo0-KcUPSSzrbdM6X1ToZfttVMztBdLkfPZENcG0joYxYzeA6Bq0",
-        "coverPhotoMediaItemId": "APyYgs6s_Je1g1YlNOfxpETpP8GS8q_x-_fyBf8XZCkVAL7AK0-YXB_aPB-3YWGQWOLC3wDsa44W1dgm3SavHcuwzVWSdrxQzw"
-      },
-      {
-        "id": "APyYgs41anos00wlO8sbOcZeQoCwh9evl4JQjKse8DP3yPh6qPvedwfKkkQ1VvuvdfS1GWUS9DNm",
-        "title": "CUHackit 2020",
-        "productUrl": "https://photos.google.com/lr/album/APyYgs41anos00wlO8sbOcZeQoCwh9evl4JQjKse8DP3yPh6qPvedwfKkkQ1VvuvdfS1GWUS9DNm",
-        "mediaItemsCount": "19",
-        "coverPhotoBaseUrl": "https://lh3.googleusercontent.com/lr/AGWb-e6JlvJRN8461XrEGuUVfIcpIjpcrAxxVj66FujD2O4KABbUP9y4uhZTu7hvQMagJCGcS4AcwAaNvuehmpQoQ-t6wJ1WgFyvwC1UoXIyssOmguotn9s9LAF1Z-CrwlN7N9nQMgACuDE3YunnBtGTein1z9mdx0fn5bW_jbSRgdKUp3MHK_2PFHabo1RaZKtY7fOIx1oGCIkFyz-Qyoedv9Bj5XVYBKol8yHqiWmio3E9ScELJbZq5QJPT0Ws3fWyXtrfXfdWMu6a81LQn1qq_U-GQ5ya3T5UdQEPgk4f9fnINfJsA1HENL1YAxGxqDm85Ti3_i08yK1IQ-nN9kVVYkEO746Uxro_F-FX_MV0pdprRW8HOEbgEejpRq458gyzGunIiJz3ykD6wqdKtvQWwJq96lYBdlF42M03FkuF3PEyWUCoizIYQHGDgiReYX0cxd0xou2rkdgnLbhquZbUJwVzQbryboKLvp21dPZQLGZdPmJvA4gcKpRuK3Fg4uWbaMKlGVzA7fegRC4ugryMozNEt-9AEeAhMYWrB0X_VrHtwuQkkLBkSlWjvqKvx7MmkxqJZuUnnnB7jQ16HDLYfGQIPZw0g-7axF_mjyKjaoVSTNdd73OSLo2fBM0Q3NysWLXN9DFoOLeKthVmMjxZjenZEJ3W2uJOBXOXFT7nefuTOjomsFT0bIU6j0fH2HexjQsZHDKgAOFVSBzL7gAnLKHmNmKGAGFsoTCgnBXgxEsO9ihUstd2rdYIA4kbPwkv5Q9rgShGyNPWkyImEVHynr8",
-        "coverPhotoMediaItemId": "APyYgs7mminVY_YxhEAcs3un8IMIzgbVm0sdEO921bl8UGgyKyQV2RaIFaPtCKVPIsEDoNR6j6KG-VS2sroLsYz8J0_Yw3gzzA"
-      },
-      {
-        "id": "APyYgs4k9qwjurTLl1unwA2aCNH8B2UCEfeQKSl-3Ri4SoT8Fg5DtwfPwew3ly4MKd2P1tQWxe_h",
-        "title": "House",
-        "productUrl": "https://photos.google.com/lr/album/APyYgs4k9qwjurTLl1unwA2aCNH8B2UCEfeQKSl-3Ri4SoT8Fg5DtwfPwew3ly4MKd2P1tQWxe_h",
-        "mediaItemsCount": "48",
-        "coverPhotoBaseUrl": "https://lh3.googleusercontent.com/lr/AGWb-e5nsx3Orlwi871lmLPKYsXFaqMGstHT9bjoYz2HgqIpWiyJwkiyIdXM9PZtRDPZ_esGnWlHfwcv9CLM4zmKSG5nd_UK3qeiNTSkA7sERGDvZVu0cwrF64Zxe-F5UHIRjoernlU0Ym1p9_l4Rx1Qks0waMAUmiK5SAQpsIEvpeF-K1aCfJYdQ5LrRQIJatSjFxtpBJc0UHQ7CvasywfEwgkxW45sYvGpQxLzrIheuwuZy3ysjGO7equWyGWjEp5qd6xV6BJtKRE8Wm-t7ONQ5PI6lDHVChOrhvRC-WA8wWUUJM51zKYGUMfTitUv_Oyvtf6sDxo-xcG0gZ0Nwvv3KYwbyBJwna5JcqlV90pjs3Nib19AGZ0RKDvBD_VnFxXN6qDz8YtNQPE7_xezYkmCO_xciPYIPcLJPJ1PNZJ_BvCZv0G6uGQa_JadEPXwgXlwLC22WkBeqOPTOk8QrWZFl-Uabrmur84GHggcNvaUI2VgHo5eiY2zD2o4Gw1mPyHIoFu6qyDNScze5o-jjgKq2nnrfzm-8o0A-M1F24JnGLE4VEzQ2p2X2K08qZefuWR9jDRQv8GXTunNEtkAP1IJPGVqsk2Xg1lPw2uDJDvYAKbwHj4TkFVJ0fo7wbfZmb4WJvHDhotP26gUQyqFLcgwqcxBp4p7SVnwr33ePJXRUXdhEzygK2T8J1irBLR7jrDicgrnIrg_IiuT2ge7e6WRlOkOMrtnqZGfqOP5C4XmVoLCp7xAAmKqCNvKcfcBzJbFrHh21rnByE3yh_8qbGaJNEw",
-        "coverPhotoMediaItemId": "APyYgs4oEdAhREHt0Ne4LQ4qJH8SMut0HnUh-odlI89M3O3wFdKcIOdlRiChADr9Ej_fdVroF0n43F0iYILZI6jVvPTmmrU2Rg"
-      },
-      {
-        "id": "APyYgs5hIDIyPg4qK5pfacWJhBy27nHeev-HZZ1Rg5XIXctkcwbBkKpwO7wX19pdPX3it2AA7maA",
-        "title": "House party",
-        "productUrl": "https://photos.google.com/lr/album/APyYgs5hIDIyPg4qK5pfacWJhBy27nHeev-HZZ1Rg5XIXctkcwbBkKpwO7wX19pdPX3it2AA7maA",
-        "mediaItemsCount": "340",
-        "coverPhotoBaseUrl": "https://lh3.googleusercontent.com/lr/AGWb-e6AsdqNvrTDkGfe7YwK9R2BucJWI5iuUGhwE9EMhk2p-4DZrvc9Jme_94-rmvOqPzKPTQVtCVPt2w3KDI9JX2J7FQbVgur0YEKNocc9wfJPQ0yvKKTIwa4VB_I-3KFr0Jdu4p5HFQoI4Yay-CCsDtqR0BC4moVdQoKC0i8cbnzs-kQplC6SKhGggRZKGB0wdLlyqxACDwFWcoOEtyAchglRdGNGTFWcu4DDSZ37N6eQoVAriSVvqVQt91ldyI6tF9H8PgbjtcVj3FF95GsIBpos-wDMBwUWksIEVJqqiBgj34hDU_HVhTuMghxD53ztpkEkRz5tTNEbJf_Z5jReRrSOV6i0inpfQUulRGp-Sk9F3UTBt8RkLB3cPu0NacgmoM71NUusnF6MV2nQqW_Q_7BoKm6kDp1JbPtYaTgQXQg7linK7B8BcN301Rbjdgu67BWnQXauqE7slZ1Wr2oj9ELwOix557DS6VBPGFHtwlQIstd4yb7W5FwLJc7eOgZdGJ6Tgan1wcV0rb-DYeLe-KDqL0ipzXb65kQczKc0hqSj7sEqWcAcysPFBdMwkIwhRIUrDslT2-mlodZU7wzsSwoPuBTSnZbqYtIZiha6avSyCzWhdUyEHgGHXAJsqAvv2QL6qVr9ZiIGKc-OrgD4yNvyJ6afHeozvsdusXT2k0k71twR5tLbqSGgTpmAYUS5GMNUGUHMx0An13U6VwDbcrMsIqvuSFn_8zxdrmDw6fta2l3BD-LadM8ZCe8wGtRnf5EZ0JFNqW12S4UrlpeUgC4",
-        "coverPhotoMediaItemId": "APyYgs6XpUbRvVJwaJ0P0Rt53e1MrFsI3XsIdY3hrWd81PLxh8ULML-4OBaVoyJ4LZztN2V82D7RusoAWoiw9hz8DlmXxN1FTA"
-      },
-      {
-        "id": "APyYgs4VC2WCtxZWhz6XTWPc3Q5dkNAx0lqeRz3PFBXmycGgyEcAo1KPN4Kh-2ZDhJYknzpR6gow",
-        "title": "Friendsgiving",
-        "productUrl": "https://photos.google.com/lr/album/APyYgs4VC2WCtxZWhz6XTWPc3Q5dkNAx0lqeRz3PFBXmycGgyEcAo1KPN4Kh-2ZDhJYknzpR6gow",
-        "mediaItemsCount": "32",
-        "coverPhotoBaseUrl": "https://lh3.googleusercontent.com/lr/AGWb-e4F5Lh-T57lJaDMnb7T5JjUazKnyRxb3O1-Wyy1vW5WutN-_wgjCrUFUFEsSyy1T4In6dWKdbncDSH-8bJ0W0DXLf397ucLfke8bQcKpXs6E6cP1GZsk82L-Fdy2cCEqUBnp5coXDinQgAJ7CdpjvxvbjBgSjWZyLIn3eoSrEG_1OPeegUXY0oKP8EtMVy1hJbX8xE0m50UfXNjO1EIt_tgx94b7qF_kTbbJrTBwXKJeCdhWO_vxeq6lpcM-6YtXmqA7Eug42BowENqhFY94pGXLkM33JtxiX_tIy4LZk6KknR8viQL5b1yLWUHdK_dsByYlOtp7uVzqGRT-vwh6GO3ALt8UalgcXU2aiP8byfrkzSkNi6hHtOttXFzYbOn3wqXp5QkZnNmlflBHgXBO_TQbkfBeMMObPzBfkmVx2hzoim7MIVDXDtqSPLC8oxupudkniIHxCvJPTGc-XjDuvATRXXae4XfEO1clr21TCtZ9urSiEPK91Q09-nKHjT8a2YEy-nVjcjp-O_o5llu5JuN-7HNEIunFw9kdMjVfFeiBDLTnV9OSO8BLzkWd00VGY3_7vBT68plZiTA3HucurFZdteCz8AThTGV1MxVg7X7Skv3SHVCPzGY5eprFyD_XKInkC-3G2J9i5WVsBC1-LDNL_ISzUUABHiPxHOq3enZRb45DTMWOi2061z0C9RxQgpuXif-QsTT_uysRlDdEKUMqM0RER5WqQo8yZ6c7dDLv45Z670QkKOW6xx5Zteu-AAFCHhw5D7crYcuTYoMV_Q",
-        "coverPhotoMediaItemId": "APyYgs6ECh1JJ45qQwVAFOj0S9rJUtCpqi9aSmerth1Wi0XEWCy3KgyMDfWMRE49WYIL82JwxSMJInwuqQPl2VU_H0-tzSjidw"
-      },
-      {
-        "id": "APyYgs4yidt5HZMib_c_qaOGtTURKH30obQmo91YhNJcknq-PyYs52Yu3E49O7GbOoYi6D3C4Qo2",
-        "title": "Digital art",
-        "productUrl": "https://photos.google.com/lr/album/APyYgs4yidt5HZMib_c_qaOGtTURKH30obQmo91YhNJcknq-PyYs52Yu3E49O7GbOoYi6D3C4Qo2",
-        "mediaItemsCount": "242",
-        "coverPhotoBaseUrl": "https://lh3.googleusercontent.com/lr/AGWb-e4jxwPmcIgpH3np6vk1wJfRp9meq8-BHZE33BAh8h9lNHVNTHJS2Qzuw3QSshHJt64ZY1FeHKGPvg9AINIWFDA17mTs0SaqEj_HGebLoS-MayHOgv8WFZ8HUl7fXzezJXZPIEsO0WlzNfr72XXZKCMHktD31qmSfuXobSChv38wVtXKavvGMOZ47yvagerL07CBUc4zsUKZd90hqalIAtmXik_yGSLIdWH_oz0HnPeODHLWT1CylxVub_lIVebjwQhofqH0cMK6hIPALXfBV2iCHy_f8r6bgTMBIbMg9lQ5AumbnWmUQMYLIwewCiaeT3WJMLpCp0iqmegwAfyywkY-owxEPIOo08bIHsRJVuoWKjVexK7Yj9Q2ZlnUDD1aDj8YVZbCo7iWjl70CB9E7splNkGsf3fa8p0KYk4uYleFSoGSVldA1CaVEo2AjOKHNVepRDdU1_5viqY8SNysbFRim50qbMDZVV8IesTSKQP6G7MoOaOv9Uwpd5j-kQZqX0AWyNdsE8Hb4RR-ekf31o8Doa8ukcQsvE0lI2xCEgVabqnuY8gSDhRFsskNpfWpOaQtOg-EfWI-t9RcZnpDPzcSmXBWAturP3HMfPkLIdfQ5JwLig_8QlG3GsF1vTpMGohjeRtcYCDboB0_pw81mrqMpalR_S-n5DooEB6YW-rL9_VUO6sMePxpiiplyxzdFV8i5xzBgpnCjqSS97nsnMLmL-X-w8gPnxBIS8XSumt7gNhWeLv4hlDIW1mvORlC1AgVqC1LNPxb8FaTMRf7Yec",
-        "coverPhotoMediaItemId": "APyYgs7SYvwxiOy74OZ07tU20o7QkFmQA7UqRQdngEh9rAi0lMMJxaM2DieGjlhGdOt6MPAGLxwZ0Cnr8pXvB_1EK3cjawtYoA"
-      }
-    ],
+    favorites: [],
+    albums: [],
     "mediaItems": [
       {
         "id": "APyYgs4CWZk3pF8AaJvx1ap_7OuGw1yfO_dVMZ0gGADAe9K1_zh4SFcNwoMZ8HUWnzdMOLECCNQP7HU0-jUCae06fXQCtygGkQ",
