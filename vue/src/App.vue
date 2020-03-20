@@ -26,37 +26,64 @@
               v-btn.ma-1(outlined) Next
               v-btn.ma-1(outlined) Random
 
-        //- Album selection
-        h3.subtitle-1.font-weight-bold.ma-3 Selected albums
-        v-expansion-panels.albums(accordion multiple)
+        //- Album list
+        v-skeleton-loader(
+          type='list-item@10'
+          :loading='!(favorites.length && albums.length)'
+        )
+          h3.subtitle-1.font-weight-bold.ma-3 Selected albums
 
-          //- Favorites panel
-          v-expansion-panel
-            v-expansion-panel-header.py-0(v-slot='open')
-              v-layout
-                v-checkbox(label='Favorites')
-            
-            v-expansion-panel-content
-              v-row
-                v-col.pa-1(cols='3' sm='2' md='1' v-for='mediaItem in favorites' :key='mediaItem.id')
-                  v-card(@click='setWallpaper(mediaItem)')
-                    v-img(:src='mediaItem.baseUrl' aspect-ratio='1')
-
-          v-expansion-panel(v-for='album in albums' :key='album.id' @change='loadAlbum(album.id)')
-
-            //- Album list            
-            v-expansion-panel-header.py-0(v-slot='open')
-              v-layout
-                v-checkbox(v-model='selectedAlbums' :value='album.id' :label='album.title' @click.native='preventExpansion')
-            
-            //- Album image content
-            v-expansion-panel-content
-              v-skeleton-loader(type='image' v-if='!album.mediaItems')
-                  
-              v-row(v-if='album.mediaItems')
-                v-col.pa-1(cols='3' sm='2' md='1' v-for='mediaItem in album.mediaItems' :key='mediaItem.id')
-                  v-card(@click='setWallpaper(mediaItem)')
-                    v-img(:src='mediaItem.baseUrl' aspect-ratio='1')
+          v-expansion-panels.albums(accordion multiple)
+            //- Favorites panel
+            v-expansion-panel
+              v-expansion-panel-header.py-0(v-slot='open')
+                v-layout
+                  v-checkbox(
+                    label='Favorites'
+                    :value='favorites'
+                    @click.native='preventExpansion'
+                  )
+              v-expansion-panel-content
+                v-row
+                  v-col.pa-1(
+                    cols='3' sm='2' md='1'
+                    v-for='mediaItem in favorites'
+                    :key='mediaItem.id'
+                  )
+                    v-card(@click='setWallpaper(mediaItem)')
+                      v-img(
+                        :src='mediaItem | medUrl'
+                        :lazy-src='mediaItem | smallUrl'
+                        aspect-ratio='1'
+                      )
+            //- Album panels list           
+            v-expansion-panel(
+              v-for='album in albums'
+              :key='album.id'
+              @change='loadAlbum(album.id)'
+            )
+              v-expansion-panel-header.py-0(v-slot='open')
+                v-layout
+                  v-checkbox(
+                    v-model='selectedAlbums'
+                    :label='album.title'
+                    :value='album.id'
+                    @click.native='preventExpansion'
+                  )
+              v-expansion-panel-content
+                v-skeleton-loader(type='image' :loading='!album.mediaItems')
+                  v-row
+                    v-col.pa-1(
+                      cols='3' sm='2' md='1'
+                      v-for='mediaItem in album.mediaItems'
+                      :key='mediaItem.id'
+                    )
+                      v-card(@click='setWallpaper(mediaItem)')
+                        v-img(
+                          :src='mediaItem | medUrl'
+                          :lazy-src='mediaItem | smallUrl'
+                          aspect-ratio='1'
+                        )
 </template>
 
 <script>
@@ -69,17 +96,32 @@ export default {
     })
 
     window.eel.get_albums()(({ albums }) => {
-      console.log(albums);
       this.$data.albums= albums;
     })
+  },
+  filters: {
+    smallUrl: function(mediaItem) {
+      return mediaItem.baseUrl + `=w25-h25`;
+    },
+    medUrl: function(mediaItem) {
+      return mediaItem.baseUrl + `=w150-h150`;
+    },
+    largeUrl: function(mediaItem) {
+      const MAX_SIZE = 16383;
+      const width = mediaItem.mediaMetadata ? mediaItem.mediaMetadata.width : MAX_SIZE;
+      const height = mediaItem.mediaMetadata ? mediaItem.mediaMetadata.height : MAX_SIZE;
+      return mediaItem.baseUrl + `=w${width}-h${height}`;
+    }
   },
   methods: {
     preventExpansion: function(event) {
       event.cancelBubble = true;
     },
     loadAlbum: function(albumId) {
+
+      // TODO: Load next page of photos on scroll
+
       window.eel.get_album_media_items(albumId)(({ mediaItems }) => {
-        console.log(mediaItems);
         this.albums = this.albums.map(album => {
           if (album.id == albumId) {
             album.mediaItems = mediaItems;
@@ -89,9 +131,8 @@ export default {
       })
     },
     setWallpaper: function(mediaItem) {
-      // const MAX_SIZE = 16383;
-      let url = mediaItem.baseUrl;
-      url += `=w${mediaItem.mediaMetadata.width}-h${mediaItem.mediaMetadata.height}`;
+      let url = this.filters.largeUrl(mediaItem);
+      
       window.eel.set_wallpaper(url)(() => {
         // Finished setting wallpaper
         // TODO: Add loading indicator while downloading image
