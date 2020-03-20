@@ -26,24 +26,26 @@
 
 <script>
 import Vue from 'vue';
+import { mapState } from 'vuex'
 
 export default {
     name: 'mediaItems',
     props: ['mediaItems', 'source'],
     methods: {
-        setWallpaper: function(mediaItem, source) {
+        setWallpaper: async function(mediaItem, source) {
 			Vue.set(mediaItem, 'loading', true);
 
 			// Attach name of source for reference in the current wallpaper preview
 			mediaItem.source = source;
-
-			window.eel.set_wallpaper(mediaItem)(() => {
-                Vue.set(mediaItem, 'loading', false);
-
-                // TODO: Use Vuex for central options data store
-				// this.currentWallpaper = mediaItem;
-			});
+            await this.$store.dispatch('setWallpaper', { mediaItem });
+			
+            Vue.set(mediaItem, 'loading', false);
 		}
+    },
+    computed: {
+        ...mapState([
+            'currentWallpaper'
+        ])
     }
 }
 </script>

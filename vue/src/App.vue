@@ -68,7 +68,8 @@
 </template>
 
 <script>
-import MediaItems from '@/components/MediaItems.vue'
+import { mapState } from 'vuex';
+import MediaItems from '@/components/MediaItems.vue';
 
 export default {
 	name: 'App',
@@ -77,19 +78,10 @@ export default {
 		MediaItems
 	},
 
-	mounted() {
-		window.eel.get_current_wallpaper()(mediaItem => {
-			console.log('item', mediaItem)
-			this.$data.currentWallpaper = mediaItem;
-		});
-
-		window.eel.get_favorites()(({ mediaItems }) => {
-			this.$data.favorites = mediaItems;
-		});
-
-		window.eel.get_albums()(({ albums }) => {
-			this.$data.albums= albums;
-		});
+	beforeCreate() {
+		this.$store.dispatch('getCurrentWallpaper');
+		this.$store.dispatch('getFavorites');
+		this.$store.dispatch('getAlbums');
 	},
 
 	methods: {
@@ -97,22 +89,10 @@ export default {
 			// Disable click bubbling below an element on click event
 			event.cancelBubble = true;
 		},
-
 		loadAlbum: function(albumId) {
-
 			// TODO: Load next page of photos on scroll
-
-			window.eel.get_album_media_items(albumId)(({ mediaItems }) => {
-				this.albums = this.albums.map(album => {
-					if (album.id == albumId) {
-						album.mediaItems = mediaItems;
-					}
-					return album;
-				})
-			})
+			this.$store.dispatch('getAlbum', { albumId })
 		},
-
-		
 	},
 
 	computed: {
@@ -121,15 +101,14 @@ export default {
 				{ text: this.currentWallpaper.source },
 				{ text: this.currentWallpaper.filename }
 			]
-		}
-	},
-
-	data: () => ({
-		selectedAlbums: [],
-		currentWallpaper: {},
-		favorites: [],
-		albums: []
-	}),
+		},
+		...mapState([
+			'selectedAlbums',
+			'currentWallpaper',
+			'favorites',
+			'albums'	
+		])
+	}
 };
 </script>
 
