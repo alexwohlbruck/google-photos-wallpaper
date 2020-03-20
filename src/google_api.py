@@ -93,6 +93,9 @@ class GoogleApi():
             'filters': {
                 'featureFilter': {
                     'includedFeatures': ['FAVORITES']
+                },
+                'mediaTypeFilter': {
+                    'mediaTypes': ['PHOTO']
                 }
             },
             'pageSize': 100
