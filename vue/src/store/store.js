@@ -38,13 +38,22 @@ export const store = new Vuex.Store({
 
     actions: {
         getCurrentWallpaper ({ commit }) {
-            window.eel.get_current_wallpaper()(mediaItem => {
-                commit('setCurrentWallpaper', { mediaItem });
-            });
+            return new Promise(( res ) => {
+                window.eel.get_current_wallpaper()(mediaItem => {
+
+                    // Save source data from original object
+                    let source = mediaItem.source;
+    
+                    // Retrieve mediaItem again to get new baseUrl
+                    window.eel.get_media_item(mediaItem.id)(mediaItem => {
+                        mediaItem.source = source;
+                        commit('setCurrentWallpaper', { mediaItem });
+                        res();
+                    });
+                });
+            })
         },
         setWallpaper ({ commit }, { mediaItem }) {
-            // Return a promise so the caller can know when the
-            // wallpaper has finished downloading
             return new Promise(( res ) => {
                 window.eel.set_wallpaper(mediaItem)(() => {
                     commit('setCurrentWallpaper', { mediaItem });

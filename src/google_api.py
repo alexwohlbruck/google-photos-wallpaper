@@ -118,3 +118,8 @@ class GoogleApi():
             'pageSize': 100
         }
         return cls.photos.mediaItems().search(body = body).execute()
+
+    @classmethod
+    def get_media_item(cls, media_item_id):
+        cls.ensure_valid_token()
+        return cls.photos.mediaItems().get(mediaItemId = media_item_id).execute()

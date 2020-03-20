@@ -8,4 +8,4 @@ This is a utility that will update your desktop wallpaper from your Google Photo
 - Filter photos that are too small, have a poor aspect ratio, or create a custom blacklist.
 - Previous, next, and random buttons to quickly change the wallpaper, or select one from the album list.
 
-![App screenshot](https://i.imgur.com/7xrrJTB.png)
+![App screenshot](https://i.imgur.com/t3tXbSW.png)

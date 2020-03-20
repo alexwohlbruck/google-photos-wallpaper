@@ -13,19 +13,21 @@
 				v-row.mb-12.align-center
 					v-col(cols='5')
 						v-card.round(elevation='22')
-							v-skeleton-loader(type='image' max-height='350' :value='!!currentWallpaper')
-								v-img.round(v-if='currentWallpaper' :src='currentWallpaper.baseUrl' max-height='350')
+							v-skeleton-loader(type='image' max-height='350' v-if='loadingCurrentWallpaper')
+							v-img.round(v-if='!loadingCurrentWallpaper' :src='currentWallpaper.baseUrl' max-height='350')
 
 					//- Current item details
 					v-col.pb-10(cols='7')
 						.pa-5
-							h3.headline.font-weight-bold Current wallpaper
-							v-breadcrumbs.px-1.pt-1.pb-2(:items='breadcrumbs')
-								template(v-slot:divider)
-									v-icon mdi-chevron-right
-							v-btn.ma-1(outlined) Previous
-							v-btn.ma-1(outlined) Next
-							v-btn.ma-1(outlined) Random
+							v-skeleton-loader(type='sentences, heading' v-if='loadingCurrentWallpaper')
+							div(v-if='!loadingCurrentWallpaper')
+								h3.headline.font-weight-bold Current wallpaper
+								v-breadcrumbs.px-1.pt-1.pb-2(:items='breadcrumbs')
+									template(v-slot:divider)
+										v-icon mdi-arrow-right
+								v-btn.ma-1(outlined) Previous
+								v-btn.ma-1(outlined) Next
+								v-btn.ma-1(outlined) Random
 
 				//- Album list
 				v-skeleton-loader(
@@ -78,22 +80,16 @@ export default {
 		MediaItems
 	},
 
-	beforeCreate() {
-		this.$store.dispatch('getCurrentWallpaper');
+	async beforeCreate() {
 		this.$store.dispatch('getFavorites');
 		this.$store.dispatch('getAlbums');
+		await this.$store.dispatch('getCurrentWallpaper');
+		this.loadingCurrentWallpaper = false;
 	},
 
-	methods: {
-		preventExpansion: function(event) {
-			// Disable click bubbling below an element on click event
-			event.cancelBubble = true;
-		},
-		loadAlbum: function(albumId) {
-			// TODO: Load next page of photos on scroll
-			this.$store.dispatch('getAlbum', { albumId })
-		},
-	},
+	data: () => ({
+		loadingCurrentWallpaper: true
+	}),
 
 	computed: {
 		breadcrumbs: function() {
@@ -108,7 +104,18 @@ export default {
 			'favorites',
 			'albums'	
 		])
-	}
+	},
+
+	methods: {
+		preventExpansion: function(event) {
+			// Disable click bubbling below an element on click event
+			event.cancelBubble = true;
+		},
+		loadAlbum: function(albumId) {
+			// TODO: Load next page of photos on scroll
+			this.$store.dispatch('getAlbum', { albumId })
+		},
+	},
 };
 </script>
 

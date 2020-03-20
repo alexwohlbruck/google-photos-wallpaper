@@ -22,5 +22,5 @@ icon.menu = pystray.Menu(
 	)
 )
 
-open_ui()
-# icon.run()
+# open_ui()
+icon.run()

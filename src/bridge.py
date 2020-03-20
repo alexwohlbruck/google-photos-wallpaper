@@ -47,9 +47,9 @@ def get_album_media_items(album_id):
     return GoogleApi.get_album_media_items(album_id)
 
 @eel.expose
-def get_media_item(item_id):
+def get_media_item(media_item_id):
     # Retreive data for a media item
-    return {}
+    return GoogleApi.get_media_item(media_item_id)
 
 
 @eel.expose
