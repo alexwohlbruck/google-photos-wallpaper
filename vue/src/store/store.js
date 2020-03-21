@@ -5,10 +5,12 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
     state: {
-        selectedAlbums: [],
-		currentWallpaper: {},
 		favorites: [],
-		albums: []
+        albums: [],
+        options: {
+            currentWallpaper: {},
+            selectedAlbums: []
+        }
     },
 
     getters: {
@@ -33,6 +35,10 @@ export const store = new Vuex.Store({
                 }
                 return album;
             })
+        },
+        setUserOptions(state, { options }) {
+            options.selectedAlbums = options.selectedAlbums.map(a => a.id);
+            state.options = options;
         }
     },
 
@@ -40,6 +46,13 @@ export const store = new Vuex.Store({
         getCurrentWallpaper ({ commit }) {
             return new Promise(( res ) => {
                 window.eel.get_current_wallpaper()(mediaItem => {
+
+                    // TODO: Possible refactor - commit the first time omitting
+                    // TODO: the baseUrl prop, use missing prop to detect loading
+                    // TODO: instead of using a promsie
+
+                    // Set already available data
+                    commit('setCurrentWallpaper', { mediaItem })
 
                     // Save source data from original object
                     let source = mediaItem.source;
@@ -76,8 +89,20 @@ export const store = new Vuex.Store({
 				commit('setAlbum', {
                     albumId,
                     mediaItems
-                })
-			})
+                });
+			});
+        },
+        getUserOptions ({ commit }) {
+            window.eel.get_user_options()(options => {
+                commit('setUserOptions', { options })
+            });
+        },
+        setSelectedAlbums (context, { selectedAlbums }) {
+            return new Promise(( res ) => {
+                window.eel.set_selected_albums(selectedAlbums)(() => {
+                    res();
+                });
+            });
         }
     }
 })

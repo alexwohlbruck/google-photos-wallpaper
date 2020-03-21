@@ -6,7 +6,7 @@
 			flat
 		)
 			v-app-bar-nav-icon
-			
+	
 		v-content
 			v-container
 				//- Current wallpaper preview
@@ -14,13 +14,13 @@
 					v-col(cols='5')
 						v-card.round(elevation='22')
 							v-skeleton-loader(type='image' max-height='350' v-if='loadingCurrentWallpaper')
-							v-img.round(v-if='!loadingCurrentWallpaper' :src='currentWallpaper.baseUrl' max-height='350')
+							v-img.round(v-if='!loadingCurrentWallpaper' :src='options.currentWallpaper.baseUrl' max-height='350')
 
 					//- Current item details
 					v-col.pb-10(cols='7')
 						.pa-5
-							v-skeleton-loader(type='sentences, heading' v-if='loadingCurrentWallpaper')
-							div(v-if='!loadingCurrentWallpaper')
+							v-skeleton-loader(type='sentences, heading' v-if='!options.currentWallpaper')
+							div(v-if='options.currentWallpaper')
 								h3.headline.font-weight-bold Current wallpaper
 								v-breadcrumbs.px-1.pt-1.pb-2(:items='breadcrumbs')
 									template(v-slot:divider)
@@ -28,7 +28,7 @@
 								v-btn.ma-1(outlined) Previous
 								v-btn.ma-1(outlined) Next
 								v-btn.ma-1(outlined) Random
-
+				
 				//- Album list
 				v-skeleton-loader(
 					type='list-item@10'
@@ -42,8 +42,9 @@
 							v-expansion-panel-header.py-0(v-slot='open')
 								v-layout
 									v-checkbox(
+										v-model='options.selectedAlbums'
 										label='Favorites'
-										:value='favorites'
+										value='favorites'
 										@click.native='preventExpansion'
 									)
 							v-expansion-panel-content
@@ -59,7 +60,7 @@
 							v-expansion-panel-header.py-0(v-slot='open')
 								v-layout
 									v-checkbox(
-										v-model='selectedAlbums'
+										v-model='options.selectedAlbums'
 										:label='album.title'
 										:value='album.id'
 										@click.native='preventExpansion'
@@ -83,7 +84,7 @@ export default {
 	async beforeCreate() {
 		this.$store.dispatch('getFavorites');
 		this.$store.dispatch('getAlbums');
-		await this.$store.dispatch('getCurrentWallpaper');
+		await this.$store.dispatch('getUserOptions');
 		this.loadingCurrentWallpaper = false;
 	},
 
@@ -94,13 +95,12 @@ export default {
 	computed: {
 		breadcrumbs: function() {
 			return [
-				{ text: this.currentWallpaper.source },
-				{ text: this.currentWallpaper.filename }
+				{ text: this.options.currentWallpaper.source },
+				{ text: this.options.currentWallpaper.filename }
 			]
 		},
 		...mapState([
-			'selectedAlbums',
-			'currentWallpaper',
+			'options',
 			'favorites',
 			'albums'	
 		])
@@ -116,6 +116,15 @@ export default {
 			this.$store.dispatch('getAlbum', { albumId })
 		},
 	},
+
+	watch: {
+		options: {
+			handler: function(options) {
+				this.$store.dispatch('setSelectedAlbums', { selectedAlbums: options.selectedAlbums });
+			},
+			deep: true
+		}
+	}
 };
 </script>
 

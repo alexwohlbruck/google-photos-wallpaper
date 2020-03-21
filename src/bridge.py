@@ -53,10 +53,18 @@ def get_media_item(media_item_id):
 
 
 @eel.expose
+def set_selected_albums(selected_albums):
+    # User has changed the album selection
+    Options.set_selected_albums(selected_albums)
+
+@eel.expose
 def get_current_wallpaper():
     # Get current wall from user options
     return Options.get_current_wallpaper()
 
+@eel.expose
+def get_user_options():
+    return Options.get_user_options()
 
 @eel.expose
 def set_wallpaper(media_item):
