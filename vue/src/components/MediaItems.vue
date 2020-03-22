@@ -18,8 +18,8 @@
                     //- Current set wallpaper overlay
                     v-overlay(
                         absolute color='blue'
-                        v-if='currentWallpaper'
-                        :value='mediaItem.id == currentWallpaper.id'
+                        v-if='options.currentWallpaper'
+                        :value='mediaItem.id == options.currentWallpaper.id'
                     )
                         v-icon mdi-check
 </template>
@@ -44,7 +44,7 @@ export default {
     },
     computed: {
         ...mapState([
-            'currentWallpaper'
+            'options'
         ])
     }
 }

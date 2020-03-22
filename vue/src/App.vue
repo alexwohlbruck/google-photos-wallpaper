@@ -6,15 +6,19 @@
 			flat
 		)
 			v-app-bar-nav-icon
+
 	
+		v-overlay(:value='appLoading')
+			v-progress-circular(indeterminate)
+
 		v-content
 			v-container
 				//- Current wallpaper preview
 				v-row.mb-12.align-center
 					v-col(cols='5')
 						v-card.round(elevation='22')
-							v-skeleton-loader(type='image' max-height='350' v-if='loadingCurrentWallpaper')
-							v-img.round(v-if='!loadingCurrentWallpaper' :src='options.currentWallpaper.baseUrl' max-height='350')
+							v-skeleton-loader(type='image' max-height='350' v-if='options.currentWallpaper.baseUrl')
+							v-img.round(v-if='!options.currentWallpaper.baseUrl' :src='options.currentWallpaper.baseUrl' max-height='350')
 
 					//- Current item details
 					v-col.pb-10(cols='7')
@@ -44,7 +48,8 @@
 									v-checkbox(
 										v-model='options.selectedAlbums'
 										label='Favorites'
-										value='favorites'
+										value='FAVORITES'
+										@click='setSelectedAlbums'
 										@click.native='preventExpansion'
 									)
 							v-expansion-panel-content
@@ -63,6 +68,7 @@
 										v-model='options.selectedAlbums'
 										:label='album.title'
 										:value='album.id'
+										@change='setSelectedAlbums'
 										@click.native='preventExpansion'
 									)
 							v-expansion-panel-content
@@ -85,11 +91,10 @@ export default {
 		this.$store.dispatch('getFavorites');
 		this.$store.dispatch('getAlbums');
 		await this.$store.dispatch('getUserOptions');
-		this.loadingCurrentWallpaper = false;
 	},
 
 	data: () => ({
-		loadingCurrentWallpaper: true
+		appLoading: false // Display an overlay over entire app with loading indicator
 	}),
 
 	computed: {
@@ -115,15 +120,12 @@ export default {
 			// TODO: Load next page of photos on scroll
 			this.$store.dispatch('getAlbum', { albumId })
 		},
-	},
-
-	watch: {
-		options: {
-			handler: function(options) {
-				this.$store.dispatch('setSelectedAlbums', { selectedAlbums: options.selectedAlbums });
-			},
-			deep: true
-		}
+		setSelectedAlbums: function() {
+			this.$data.appLoading = true;
+			window.eel.set_selected_albums(this.$store.state.options.selectedAlbums)(() => {
+				this.$data.appLoading = false;
+			});
+		},
 	}
 };
 </script>

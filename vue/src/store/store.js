@@ -19,7 +19,7 @@ export const store = new Vuex.Store({
 
     mutations: {
         setCurrentWallpaper (state, { mediaItem }) {
-            state.currentWallpaper = mediaItem
+            state.options.currentWallpaper = mediaItem
         },
         setFavorites (state, { mediaItems }) {
             state.favorites = mediaItems;
@@ -43,29 +43,6 @@ export const store = new Vuex.Store({
     },
 
     actions: {
-        getCurrentWallpaper ({ commit }) {
-            return new Promise(( res ) => {
-                window.eel.get_current_wallpaper()(mediaItem => {
-
-                    // TODO: Possible refactor - commit the first time omitting
-                    // TODO: the baseUrl prop, use missing prop to detect loading
-                    // TODO: instead of using a promsie
-
-                    // Set already available data
-                    commit('setCurrentWallpaper', { mediaItem })
-
-                    // Save source data from original object
-                    let source = mediaItem.source;
-    
-                    // Retrieve mediaItem again to get new baseUrl
-                    window.eel.get_media_item(mediaItem.id)(mediaItem => {
-                        mediaItem.source = source;
-                        commit('setCurrentWallpaper', { mediaItem });
-                        res();
-                    });
-                });
-            })
-        },
         setWallpaper ({ commit }, { mediaItem }) {
             return new Promise(( res ) => {
                 window.eel.set_wallpaper(mediaItem)(() => {
@@ -93,11 +70,28 @@ export const store = new Vuex.Store({
 			});
         },
         getUserOptions ({ commit }) {
-            window.eel.get_user_options()(options => {
-                commit('setUserOptions', { options })
-            });
+            return new Promise(( res ) => {
+                window.eel.get_user_options()(options => {
+
+                    delete options.currentWallpaper.baseUrl; // Assume baseUrl is invalid
+
+                    // Set already available data
+                    commit('setUserOptions', { options });
+
+                    // Save source data from original object
+                    let source = options.currentWallpaper.source;
+    
+                    // Retrieve mediaItem again to get new baseUrl
+                    window.eel.get_media_item(options.currentWallpaper.id)(mediaItem => {
+                        mediaItem.source = source;
+                        commit('setCurrentWallpaper', { mediaItem });
+                        res();
+                    });
+                });
+            })
         },
         setSelectedAlbums (context, { selectedAlbums }) {
+            console.log(selectedAlbums);
             return new Promise(( res ) => {
                 window.eel.set_selected_albums(selectedAlbums)(() => {
                     res();

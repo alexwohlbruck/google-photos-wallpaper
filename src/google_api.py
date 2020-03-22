@@ -87,7 +87,7 @@ class GoogleApi():
         cls.photos = build('photoslibrary', 'v1', credentials = creds)
 
     @classmethod
-    def get_favorites(cls):
+    def get_favorites(cls, page_size = None, page_token = None):
         cls.ensure_valid_token()
         body = {
             'filters': {
@@ -98,9 +98,27 @@ class GoogleApi():
                     'mediaTypes': ['PHOTO']
                 }
             },
-            'pageSize': 100
+            'pageSize': 100,
+            'pageToken': page_token
         }
         return cls.photos.mediaItems().search(body = body).execute()
+    
+    @classmethod
+    def get_all_favorites(cls, page_token = None):
+        
+        # TODO: This is practically the same code as get_all_album_media_items
+        # TODO: Consider merging the two methods, as well as get_favorites and get_album_media_items
+        # TODO: They are operating on the same API endpoint, it makes sense to merge them
+
+        page = cls.get_favorites(page_size = 100, page_token = page_token)
+        media_items = page.get('mediaItems')
+        next_page_token = page.get('nextPageToken', None)
+
+        if next_page_token == None:
+            return media_items
+        else:
+            next_page = cls.get_all_favorites(page_token = next_page_token)
+            return media_items + next_page
 
     @classmethod
     def get_albums(cls):
@@ -111,13 +129,28 @@ class GoogleApi():
         return cls.photos.albums().list(pageSize = 50).execute()
 
     @classmethod
-    def get_album_media_items(cls, album_id):
+    def get_album_media_items(cls, album_id, page_size = None, page_token = None):
         cls.ensure_valid_token()
         body = {
             'albumId': album_id,
-            'pageSize': 100
+            'pageSize': 100,
+            'pageToken': page_token
         }
         return cls.photos.mediaItems().search(body = body).execute()
+    
+    @classmethod
+    def get_all_album_media_items(cls, album_id, page_token = None):
+        # Retreive entire album content recursively
+
+        page = cls.get_album_media_items(album_id, page_size = 100, page_token = page_token)
+        media_items = page.get('mediaItems')
+        next_page_token = page.get('nextPageToken', None)
+
+        if next_page_token == None:
+            return media_items
+        else:
+            next_page = cls.get_all_album_media_items(album_id, page_token = next_page_token)
+            return media_items + next_page
 
     @classmethod
     def get_media_item(cls, media_item_id):
