@@ -19,7 +19,7 @@ export const store = new Vuex.Store({
 
     mutations: {
         setCurrentWallpaper (state, { mediaItem }) {
-            state.options.currentWallpaper = mediaItem
+            state.options.currentWallpaper = mediaItem;
         },
         setFavorites (state, { mediaItems }) {
             state.favorites = mediaItems;
@@ -31,10 +31,10 @@ export const store = new Vuex.Store({
             state.albums = state.albums.map(album => {
                 if (album.id == albumId) {
                     // album.mediaItems = mediaItems;
-                    Vue.set(album, 'mediaItems', mediaItems)
+                    Vue.set(album, 'mediaItems', mediaItems);
                 }
                 return album;
-            })
+            });
         },
         setUserOptions(state, { options }) {
             options.selectedAlbums = options.selectedAlbums.map(a => a.id);
@@ -43,7 +43,11 @@ export const store = new Vuex.Store({
     },
 
     actions: {
-        setWallpaper ({ commit }, { mediaItem }) {
+        setWallpaper ({ commit }, { mediaItem, source }) {
+            mediaItem.source = {
+                id: source.id,
+                title: source.title
+            };
             return new Promise(( res ) => {
                 window.eel.set_wallpaper(mediaItem)(() => {
                     commit('setCurrentWallpaper', { mediaItem });
@@ -88,7 +92,7 @@ export const store = new Vuex.Store({
                         res();
                     });
                 });
-            })
+            });
         },
         setSelectedAlbums (context, { selectedAlbums }) {
             console.log(selectedAlbums);

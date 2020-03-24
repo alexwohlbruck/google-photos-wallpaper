@@ -35,9 +35,7 @@ export default {
         setWallpaper: async function(mediaItem, source) {
 			Vue.set(mediaItem, 'loading', true);
 
-			// Attach name of source for reference in the current wallpaper preview
-			mediaItem.source = source;
-            await this.$store.dispatch('setWallpaper', { mediaItem });
+            await this.$store.dispatch('setWallpaper', { mediaItem, source });
 			
             Vue.set(mediaItem, 'loading', false);
 		}
