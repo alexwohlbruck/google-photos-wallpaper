@@ -43,25 +43,36 @@ class Options():
     
     @classmethod
     def set_selected_albums(cls, selected_items):
+        print('Opening file')
         with open(cls.OPTIONS_PATH, 'r') as f:
             options = json.load(f)
             f.close()
 
-        original_selection = options.get('selected_items', [])
+        original_selection = options.get('selectedAlbums', [])
         new_selection = []
+
+        print('Starting selection')
 
         # Iterate through new selection
         for album_id in selected_items:
             # Search in original selection for item containing album_id
-            search = match = next((d for d in original_selection if d['id'] == album_id), None)
-            
+            search = match = next((a for a in original_selection if a['id'] == album_id), None)
+            # search = None
+            # for album in original_selection: 
+            #     if album['id'] == album_id: 
+            #         res = album
+            #         break
+
             if search == None:
+                print('Selected new album, downloading ' + album_id)
                 # User has selected a new album
                 if album_id == 'FAVORITES':
+                    print('Album is favorites')
                     media_items = GoogleApi.get_all_favorites()
                 else:
                     media_items = GoogleApi.get_all_album_media_items(album_id)
                 
+                print('Got data')
                 # Remove these baseUrl and productUrl - not needed for storage
                 for item in media_items:
                     item.pop('baseUrl')
@@ -80,3 +91,5 @@ class Options():
         with open(cls.OPTIONS_PATH, 'w') as f:
             json.dump(options, f)
             f.close()
+        
+        print('Wrote file\n')

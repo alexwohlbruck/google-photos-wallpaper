@@ -7,9 +7,10 @@
 		)
 			v-app-bar-nav-icon
 
-	
 		v-overlay(:value='appLoading')
-			v-progress-circular(indeterminate)
+			.d-flex.flex-column.align-center
+				v-progress-circular(indeterminate)
+				p.pa-2 {{ appLoading }}
 
 		v-content
 			v-container
@@ -49,7 +50,7 @@
 										v-model='options.selectedAlbums'
 										label='Favorites'
 										value='FAVORITES'
-										@click='setSelectedAlbums'
+										@change='setSelectedAlbums'
 										@click.native='preventExpansion'
 									)
 							v-expansion-panel-content
@@ -94,7 +95,7 @@ export default {
 	},
 
 	data: () => ({
-		appLoading: false // Display an overlay over entire app with loading indicator
+		appLoading: '' // Display an overlay over entire app with loading message
 	}),
 
 	computed: {
@@ -119,11 +120,11 @@ export default {
 		loadAlbum: function(albumId) {
 			// TODO: Load next page of photos on scroll
 			this.$store.dispatch('getAlbum', { albumId })
-		},
+		}, 
 		setSelectedAlbums: function() {
-			this.$data.appLoading = true;
+			this.$data.appLoading = 'Updating album data';
 			window.eel.set_selected_albums(this.$store.state.options.selectedAlbums)(() => {
-				this.$data.appLoading = false;
+				this.$data.appLoading = '';
 			});
 		},
 	}
