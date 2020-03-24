@@ -54,7 +54,7 @@
 										@click.native='preventExpansion'
 									)
 							v-expansion-panel-content
-								media-items(:media-items='favorites' source='Favorites')
+								media-items(:media-items='favorites' :source='{id: "FAVORITES"}')
 								
 
 						//- Album panels list           
@@ -74,7 +74,7 @@
 									)
 							v-expansion-panel-content
 								v-skeleton-loader(type='image' :loading='!album.mediaItems')
-									media-items(:media-items='album.mediaItems' :source='album.title')
+									media-items(:media-items='album.mediaItems' :source='album')
 </template>
 
 <script>

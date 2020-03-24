@@ -31,6 +31,37 @@ class Options():
         with open(cls.OPTIONS_PATH, 'w') as f:
             json.dump(options, f)
             f.close()
+
+    @classmethod
+    def set_wallpaper_next(cls):
+        with open(cls.OPTIONS_PATH, 'r') as f:
+            options = json.load(f)
+            f.close()
+
+        # TODO: Find index of wallpaper in the current album
+
+        current_wall = options.get('currentWallpaper')
+        current_wall_source = current_wall.get('source').get('id')
+        current_wall_id = current_wall.get('id')
+
+        current_wall_index = options.get('selectedAlbums')
+
+        # TODO: Check bounds of index, if it goes out of album, switch to next album
+        # TODO: Else, increment index
+
+        # TODO: Update currentWallpaper attribute
+
+        with open(cls.OPTIONS_PATH, 'w') as f:
+            json.dump(options, f)
+            f.close()
+    
+    @classmethod
+    def set_wallpaper_random(cls):
+        return
+    
+    @classmethod
+    def set_wallpaper_random(cls):
+        return
     
     @classmethod
     def get_user_options(cls):
@@ -43,7 +74,6 @@ class Options():
     
     @classmethod
     def set_selected_albums(cls, selected_items):
-        print('Opening file')
         with open(cls.OPTIONS_PATH, 'r') as f:
             options = json.load(f)
             f.close()
@@ -51,28 +81,18 @@ class Options():
         original_selection = options.get('selectedAlbums', [])
         new_selection = []
 
-        print('Starting selection')
-
         # Iterate through new selection
         for album_id in selected_items:
             # Search in original selection for item containing album_id
             search = match = next((a for a in original_selection if a['id'] == album_id), None)
-            # search = None
-            # for album in original_selection: 
-            #     if album['id'] == album_id: 
-            #         res = album
-            #         break
 
             if search == None:
-                print('Selected new album, downloading ' + album_id)
                 # User has selected a new album
                 if album_id == 'FAVORITES':
-                    print('Album is favorites')
                     media_items = GoogleApi.get_all_favorites()
                 else:
                     media_items = GoogleApi.get_all_album_media_items(album_id)
                 
-                print('Got data')
                 # Remove these baseUrl and productUrl - not needed for storage
                 for item in media_items:
                     item.pop('baseUrl')
@@ -91,5 +111,3 @@ class Options():
         with open(cls.OPTIONS_PATH, 'w') as f:
             json.dump(options, f)
             f.close()
-        
-        print('Wrote file\n')
