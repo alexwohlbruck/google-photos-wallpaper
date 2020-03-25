@@ -27,12 +27,24 @@
 							v-skeleton-loader(type='sentences, heading' v-if='!options.currentWallpaper')
 							div(v-if='options.currentWallpaper')
 								h3.headline.font-weight-bold Current wallpaper
+								
 								v-breadcrumbs.px-1.pt-1.pb-2(:items='breadcrumbs')
 									template(v-slot:divider)
 										v-icon mdi-arrow-right
-								v-btn.ma-1(outlined) Previous
-								v-btn.ma-1(outlined @click='setWallpaperNext') Next
-								v-btn.ma-1(outlined) Random
+
+								v-btn.ma-1(
+									outlined
+								) Previous
+
+								v-btn.ma-1(
+									outlined
+									@click='setWallpaperNext'
+									:loading='loadingNext'
+								) Next
+
+								v-btn.ma-1(
+									outlined
+								) Random
 				
 				//- Album list
 				v-skeleton-loader(
@@ -78,7 +90,7 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex';
+import { mapState } from 'vuex';
 import MediaItems from '@/components/MediaItems.vue';
 
 export default {
@@ -95,7 +107,10 @@ export default {
 	},
 
 	data: () => ({
-		appLoading: '' // Display an overlay over entire app with loading message
+		appLoading: '', // Display an overlay over entire app with loading message
+		loadingNext: false,
+		loadingPrev: false,
+		loadingRandom: false
 	}),
 
 	computed: {
@@ -119,7 +134,7 @@ export default {
 		},
 		loadAlbum: function(albumId) {
 			// TODO: Load next page of photos on scroll
-			this.$store.dispatch('getAlbum', { albumId })
+			this.$store.dispatch('getAlbum', { albumId });
 		}, 
 		setSelectedAlbums: function() {
 			this.$data.appLoading = 'Updating album data';
@@ -127,9 +142,11 @@ export default {
 				this.$data.appLoading = '';
 			});
 		},
-		...mapActions([
-			'setWallpaperNext'
-		])
+		setWallpaperNext: async function() {
+			this.$data.loadingNext = true;
+			await this.$store.dispatch('setWallpaperNext');
+			this.$data.loadingNext = false;
+		}
 	}
 };
 </script>

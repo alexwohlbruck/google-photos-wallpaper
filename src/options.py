@@ -1,11 +1,27 @@
 import json
+import ctypes
+import urllib
+import os
+
 from src.google_api import GoogleApi
 
+# Helper methods
 def find_in_list_by_val(list_, key, val):
     return next((d for d in list_ if d[key] == val), None)
     
 def find_index_in_list_by_val(list_, key, val):
     return next((i for i, d in enumerate(list_) if d[key] == val), None)
+
+def get_large_url(media_item):
+    # Helper function to get the max size image url
+    try:
+        width = media_item['mediaMetadata']['width']
+        height = media_item['mediaMetadata']['height']
+    except (AttributeError, KeyError):
+        width = height = '16383'
+
+    return media_item['baseUrl'] + '=w' + width + '-h' + height
+
 
 # Read and update user-set options for the app
 class Options():
@@ -31,6 +47,17 @@ class Options():
         with open(cls.OPTIONS_PATH, 'r') as f:
             options = json.load(f)
             f.close()
+
+
+        # TODO: This should only work on windows. Ensure multiplatform compatibility
+        # Download full res image and change wallpaper
+        image_url = get_large_url(media_item)
+        urllib.request.urlretrieve(image_url, 'storage/wall.jpg')
+        path = os.path.abspath('storage/wall.jpg')
+        SPI = 20
+        SPIF = 2
+        ctypes.windll.user32.SystemParametersInfoW(SPI, 0, path, SPIF)
+
 
         options['currentWallpaper'] = media_item
 
@@ -75,8 +102,10 @@ class Options():
             # TODO: Change to next album when going out of bounds
             return
         else:
-            new_wall = current_album_items[index]
+            new_wall_id = current_album_items[index].get('id')
+            new_wall = GoogleApi.get_media_item(new_wall_id)
             new_wall['source'] = current_album
+
             cls.set_current_wallpaper(new_wall)
             print(new_wall)
             return new_wall

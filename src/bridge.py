@@ -1,21 +1,7 @@
 import eel
-import ctypes
-import urllib
-import os
 
 from src.google_api import GoogleApi
 from src.options import Options
-
-def get_large_url(media_item):
-    # Helper function to get the max size image url
-    try:
-        width = media_item['mediaMetadata']['width']
-        height = media_item['mediaMetadata']['height']
-    except (AttributeError, KeyError):
-        width = height = '16383'
-
-    return media_item['baseUrl'] + '=w' + width + '-h' + height
-
 
 # These methods are exposed to the Vue app
 # They are a bridge between JS and Python code
@@ -67,24 +53,10 @@ def get_user_options():
     return Options.get_user_options()
 
 @eel.expose
-def set_wallpaper(media_item):
-    # Set a media item as the user's wallpaper
-
-    # TODO: This should only work on windows. Ensure multiplatform compatibility
-
-    image_url = get_large_url(media_item)
-
-    # Download full res image
-    urllib.request.urlretrieve(image_url, 'storage/wall.jpg')
-    path = os.path.abspath('storage/wall.jpg')
-    SPI = 20
-    SPIF = 2
-    ctypes.windll.user32.SystemParametersInfoW(SPI, 0, path, SPIF)
-    
+def set_wallpaper(media_item):    
     Options.set_current_wallpaper(media_item)
-
     return True
 
 @eel.expose
 def set_wallpaper_next():
-    Options.set_wallpaper_next()
+    return Options.set_wallpaper_next()
