@@ -55,9 +55,9 @@ export const store = new Vuex.Store({
                 });
             });
         },
-        setWallpaperNext ({ commit }) {
+        setWallpaperByDirection ({ commit }, { direction }) {
             return new Promise(( res => {
-                window.eel.set_wallpaper_next()(newWallpaper => {
+                window.eel.set_wallpaper_by_direction(direction)(newWallpaper => {
                     // TODO: newWallpaper is null, but set_wallpaper_next returns a valid dict. Find out why
                     commit('setCurrentWallpaper', { mediaItem: newWallpaper });
                     res();

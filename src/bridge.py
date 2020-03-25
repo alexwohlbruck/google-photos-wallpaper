@@ -58,5 +58,5 @@ def set_wallpaper(media_item):
     return True
 
 @eel.expose
-def set_wallpaper_next():
-    return Options.set_wallpaper_next()
+def set_wallpaper_by_direction(direction):
+    return Options.set_wallpaper_by_direction(direction)

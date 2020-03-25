@@ -34,11 +34,13 @@
 
 								v-btn.ma-1(
 									outlined
+									@click='setWallpaperByDirection("prev")'
+									:loading='loadingPrev'
 								) Previous
 
 								v-btn.ma-1(
 									outlined
-									@click='setWallpaperNext'
+									@click='setWallpaperByDirection("next")'
 									:loading='loadingNext'
 								) Next
 
@@ -142,10 +144,11 @@ export default {
 				this.$data.appLoading = '';
 			});
 		},
-		setWallpaperNext: async function() {
-			this.$data.loadingNext = true;
-			await this.$store.dispatch('setWallpaperNext');
-			this.$data.loadingNext = false;
+		setWallpaperByDirection: async function(direction) {
+			let directionCamel = direction.charAt(0).toUpperCase() + direction.slice(1)
+			this.$data[`loading${directionCamel}`] = true;
+			await this.$store.dispatch('setWallpaperByDirection', { direction });
+			this.$data[`loading${directionCamel}`] = false;
 		}
 	}
 };

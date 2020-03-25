@@ -66,7 +66,8 @@ class Options():
             f.close()
 
     @classmethod
-    def set_wallpaper_next(cls):
+    def set_wallpaper_by_direction(cls, direction = 'random'):
+
         with open(cls.OPTIONS_PATH, 'r') as f:
             options = json.load(f)
             f.close()
@@ -95,9 +96,12 @@ class Options():
             current_wall_id
         )
 
-        index = current_wall_index + 1
+        if (direction == 'next'):
+            index = current_wall_index + 1
+        elif (direction == 'prev'):
+            index = current_wall_index - 1
 
-        if index == len(current_album_items):
+        if (index == len(current_album_items) and direction == 'next') or (index < 0 and direction == 'prev'):
             # Out of bounds
             # TODO: Change to next album when going out of bounds
             return
@@ -107,7 +111,6 @@ class Options():
             new_wall['source'] = current_album
 
             cls.set_current_wallpaper(new_wall)
-            print(new_wall)
             return new_wall
     
     @classmethod
