@@ -31,7 +31,7 @@
 									template(v-slot:divider)
 										v-icon mdi-arrow-right
 								v-btn.ma-1(outlined) Previous
-								v-btn.ma-1(outlined) Next
+								v-btn.ma-1(outlined @click='setWallpaperNext') Next
 								v-btn.ma-1(outlined) Random
 				
 				//- Album list
@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import MediaItems from '@/components/MediaItems.vue';
 
 export default {
@@ -108,7 +108,7 @@ export default {
 		...mapState([
 			'options',
 			'favorites',
-			'albums'	
+			'albums'
 		])
 	},
 
@@ -127,6 +127,9 @@ export default {
 				this.$data.appLoading = '';
 			});
 		},
+		...mapActions([
+			'setWallpaperNext'
+		])
 	}
 };
 </script>

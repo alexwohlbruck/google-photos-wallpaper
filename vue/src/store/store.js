@@ -55,6 +55,14 @@ export const store = new Vuex.Store({
                 });
             });
         },
+        setWallpaperNext ({ commit }) {
+            return new Promise(( res => {
+                window.eel.set_wallpaper_next()(newWallpaper => {
+                    commit('setCurrentWallpaper', { mediaItem: newWallpaper });
+                    res();
+                });
+            }));
+        },
         getFavorites ({ commit }) {
             window.eel.get_favorites()(({ mediaItems }) => {
                 commit('setFavorites', { mediaItems });

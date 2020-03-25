@@ -84,3 +84,7 @@ def set_wallpaper(media_item):
     Options.set_current_wallpaper(media_item)
 
     return True
+
+@eel.expose
+def set_wallpaper_next():
+    Options.set_wallpaper_next()

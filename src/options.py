@@ -1,6 +1,12 @@
 import json
 from src.google_api import GoogleApi
 
+def find_in_list_by_val(list_, key, val):
+    return next((d for d in list_ if d[key] == val), None)
+    
+def find_index_in_list_by_val(list_, key, val):
+    return next((i for i, d in enumerate(list_) if d[key] == val), None)
+
 # Read and update user-set options for the app
 class Options():
 
@@ -38,22 +44,42 @@ class Options():
             options = json.load(f)
             f.close()
 
-        # TODO: Find index of wallpaper in the current album
+        current_wall = options.get('currentWallpaper', None)
 
-        current_wall = options.get('currentWallpaper')
-        current_wall_source = current_wall.get('source').get('id')
+        if (current_wall == None):
+            # No current wallpaper set
+            return None
+
+        current_album = current_wall.get('source')
+        current_album_id = current_album.get('id')
         current_wall_id = current_wall.get('id')
 
-        current_wall_index = options.get('selectedAlbums')
+        # Get the album that the current wallpaper is in
+        current_album_items = find_in_list_by_val(
+            options.get('selectedAlbums'),
+            'id',
+            current_album_id
+        ).get('mediaItems')
 
-        # TODO: Check bounds of index, if it goes out of album, switch to next album
-        # TODO: Else, increment index
+        # Get the index of the current wallpaper
+        current_wall_index = find_index_in_list_by_val(
+            current_album_items,
+            'id',
+            current_wall_id
+        )
 
-        # TODO: Update currentWallpaper attribute
+        index = current_wall_index + 1
 
-        with open(cls.OPTIONS_PATH, 'w') as f:
-            json.dump(options, f)
-            f.close()
+        if index == len(current_album_items):
+            # Out of bounds
+            # TODO: Change to next album when going out of bounds
+            return
+        else:
+            new_wall = current_album_items[index]
+            new_wall['source'] = current_album
+            cls.set_current_wallpaper(new_wall)
+            print(new_wall)
+            return new_wall
     
     @classmethod
     def set_wallpaper_random(cls):
@@ -84,7 +110,7 @@ class Options():
         # Iterate through new selection
         for album_id in selected_items:
             # Search in original selection for item containing album_id
-            search = match = next((a for a in original_selection if a['id'] == album_id), None)
+            search = find_in_list_by_val(original_selection, 'id', album_id)
 
             if search == None:
                 # User has selected a new album
