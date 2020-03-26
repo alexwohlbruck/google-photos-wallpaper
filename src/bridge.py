@@ -60,3 +60,7 @@ def set_wallpaper(media_item):
 @eel.expose
 def set_wallpaper_by_direction(direction):
     return Options.set_wallpaper_by_direction(direction)
+
+@eel.expose
+def set_wallpaper_random():
+    return Options.set_wallpaper_random()

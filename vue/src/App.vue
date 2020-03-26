@@ -18,14 +18,14 @@
 				v-row.mb-12.align-center
 					v-col(cols='5')
 						v-card.round(elevation='22')
-							v-skeleton-loader(type='image' max-height='350' v-if='options.currentWallpaper.baseUrl')
-							v-img.round(v-if='!options.currentWallpaper.baseUrl' :src='options.currentWallpaper.baseUrl' max-height='350')
+							v-skeleton-loader(type='image' v-if='!options.currentWallpaper.baseUrl')
+							v-img.round(v-if='options.currentWallpaper.baseUrl' :src='options.currentWallpaper.baseUrl' max-height='350')
 
 					//- Current item details
 					v-col.pb-10(cols='7')
 						.pa-5
-							v-skeleton-loader(type='sentences, heading' v-if='!options.currentWallpaper')
-							div(v-if='options.currentWallpaper')
+							v-skeleton-loader(type='sentences, heading' v-if='!options.currentWallpaper.source')
+							div(v-if='options.currentWallpaper.source')
 								h3.headline.font-weight-bold Current wallpaper
 								
 								v-breadcrumbs.px-1.pt-1.pb-2(:items='breadcrumbs')
@@ -46,6 +46,8 @@
 
 								v-btn.ma-1(
 									outlined
+									@click='setWallpaperRandom()'
+									:loading='loadingRandom'
 								) Random
 				
 				//- Album list
@@ -68,7 +70,7 @@
 										@click.native='preventExpansion'
 									)
 							v-expansion-panel-content
-								media-items(:media-items='favorites' :source='{id: "FAVORITES"}')
+								media-items(:media-items='favorites' :source='{id: "FAVORITES", title: "Favorites"}')
 								
 
 						//- Album panels list           
@@ -118,7 +120,7 @@ export default {
 	computed: {
 		breadcrumbs: function() {
 			return [
-				{ text: this.options.currentWallpaper.source },
+				{ text: this.options.currentWallpaper.source.title },
 				{ text: this.options.currentWallpaper.filename }
 			]
 		},
@@ -149,6 +151,11 @@ export default {
 			this.$data[`loading${directionCamel}`] = true;
 			await this.$store.dispatch('setWallpaperByDirection', { direction });
 			this.$data[`loading${directionCamel}`] = false;
+		},
+		setWallpaperRandom: async function() {
+			this.$data.loadingRandom = true;
+			await this.$store.dispatch('setWallpaperRandom');
+			this.$data.loadingRandom = false;
 		}
 	}
 };

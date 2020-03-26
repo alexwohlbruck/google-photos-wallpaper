@@ -2,6 +2,7 @@ import json
 import ctypes
 import urllib
 import os
+import random
 
 from src.google_api import GoogleApi
 
@@ -66,7 +67,7 @@ class Options():
             f.close()
 
     @classmethod
-    def set_wallpaper_by_direction(cls, direction = 'random'):
+    def set_wallpaper_by_direction(cls, direction = 'next'):
 
         with open(cls.OPTIONS_PATH, 'r') as f:
             options = json.load(f)
@@ -115,12 +116,26 @@ class Options():
     
     @classmethod
     def set_wallpaper_random(cls):
-        return
-    
-    @classmethod
-    def set_wallpaper_random(cls):
-        return
-    
+        with open(cls.OPTIONS_PATH, 'r') as f:
+            options = json.load(f)
+            f.close()
+
+        selected_albums = options.get('selectedAlbums', None)
+        new_album = random.choice(selected_albums)
+
+        album_media_items = new_album.get('mediaItems', None)
+        new_album = GoogleApi.get_album(new_album.get('id'))
+
+        new_wall = random.choice(album_media_items)
+
+        # Refresh base url
+        new_wall = GoogleApi.get_media_item(new_wall.get('id'))
+        new_album.pop('mediaItems', None)
+        new_wall['source'] = new_album
+
+        cls.set_current_wallpaper(new_wall)
+        return new_wall
+
     @classmethod
     def get_user_options(cls):
         # Return the entire options config

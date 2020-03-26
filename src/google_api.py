@@ -121,6 +121,11 @@ class GoogleApi():
             return media_items + next_page
 
     @classmethod
+    def get_album(cls, album_id):
+        cls.ensure_valid_token()
+        return cls.photos.albums().get(albumId = album_id).execute()
+
+    @classmethod
     def get_albums(cls):
         cls.ensure_valid_token()
         body = {
@@ -141,6 +146,7 @@ class GoogleApi():
     @classmethod
     def get_all_album_media_items(cls, album_id, page_token = None):
         # Retreive entire album content recursively
+        cls.ensure_valid_token()
 
         page = cls.get_album_media_items(album_id, page_size = 100, page_token = page_token)
         media_items = page.get('mediaItems')

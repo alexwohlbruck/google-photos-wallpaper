@@ -58,10 +58,17 @@ export const store = new Vuex.Store({
         setWallpaperByDirection ({ commit }, { direction }) {
             return new Promise(( res => {
                 window.eel.set_wallpaper_by_direction(direction)(newWallpaper => {
-                    // TODO: newWallpaper is null, but set_wallpaper_next returns a valid dict. Find out why
                     commit('setCurrentWallpaper', { mediaItem: newWallpaper });
                     res();
                 });
+            }));
+        },
+        setWallpaperRandom ({ commit }) {
+            return new Promise(( res => {
+                window.eel.set_wallpaper_random()(newWallpaper => {
+                    commit('setCurrentWallpaper', { mediaItem: newWallpaper });
+                    res();
+                })
             }));
         },
         getFavorites ({ commit }) {
@@ -104,7 +111,6 @@ export const store = new Vuex.Store({
             });
         },
         setSelectedAlbums (context, { selectedAlbums }) {
-            console.log(selectedAlbums);
             return new Promise(( res ) => {
                 window.eel.set_selected_albums(selectedAlbums)(() => {
                     res();
