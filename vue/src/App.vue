@@ -90,7 +90,11 @@
 									)
 							v-expansion-panel-content
 								v-skeleton-loader(type='image' :loading='!album.mediaItems')
-									media-items(:media-items='album.mediaItems' :source='album')
+									media-items(
+										:media-items='album.mediaItems'
+										:source='album'
+										:disabled='!options.selectedAlbums.find(a => a == album.id)'
+									)
 </template>
 
 <script>

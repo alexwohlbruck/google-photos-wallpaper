@@ -6,6 +6,8 @@ import random
 
 from src.google_api import GoogleApi
 
+# TODO: Use global const definition for FAVORITES
+
 # Helper methods
 def find_in_list_by_val(list_, key, val):
     return next((d for d in list_ if d[key] == val), None)
@@ -123,8 +125,14 @@ class Options():
         selected_albums = options.get('selectedAlbums', None)
         new_album = random.choice(selected_albums)
 
+        new_album_id = new_album.get('id')
         album_media_items = new_album.get('mediaItems', None)
-        new_album = GoogleApi.get_album(new_album.get('id'))
+
+        # TODO: Store album title in options.json instead of retrieving it each time
+        if (new_album_id == 'FAVORITES'):
+            new_album['title'] = 'Favorites'
+        else:
+            new_album = GoogleApi.get_album(new_album_id)
 
         new_wall = random.choice(album_media_items)
 

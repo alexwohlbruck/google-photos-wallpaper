@@ -6,7 +6,10 @@
             v-for='mediaItem in mediaItems'
             :key='mediaItem.id'
         )
-            v-card(@click='setWallpaper(mediaItem, source);')
+            v-card(
+                @click='setWallpaper(mediaItem, source)'
+                :disabled='disabled'
+            )
                 v-img(
                     :src='mediaItem | medUrl'
                     :lazy-src='mediaItem | smallUrl'
@@ -30,7 +33,7 @@ import { mapState } from 'vuex'
 
 export default {
     name: 'mediaItems',
-    props: ['mediaItems', 'source'],
+    props: ['mediaItems', 'source', 'disabled'],
     methods: {
         setWallpaper: async function(mediaItem, source) {
 			Vue.set(mediaItem, 'loading', true);
