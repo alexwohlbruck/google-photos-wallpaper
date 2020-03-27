@@ -1,18 +1,11 @@
 <template lang="pug">
 	v-app
-		v-app-bar(
-			app
-			max-height='1000'
-			flat
-		)
-			v-app-bar-nav-icon
-
 		v-overlay(:value='appLoading')
 			.d-flex.flex-column.align-center
 				v-progress-circular(indeterminate)
 				p.pa-2 {{ appLoading }}
 
-		v-content
+		v-content.pt-4
 			v-container
 				//- Current wallpaper preview
 				v-row.mb-12.align-center
@@ -22,7 +15,7 @@
 							v-img.round(v-if='options.currentWallpaper.baseUrl' :src='options.currentWallpaper.baseUrl' max-height='350')
 
 					//- Current item details
-					v-col.pb-10(cols='7')
+					v-col.pb-5(cols='7')
 						.pa-5
 							v-skeleton-loader(type='sentences, heading' v-if='!options.currentWallpaper.source')
 							div(v-if='options.currentWallpaper.source')
@@ -32,23 +25,41 @@
 									template(v-slot:divider)
 										v-icon mdi-arrow-right
 
-								v-btn.ma-1(
-									outlined
-									@click='setWallpaperByDirection("prev")'
-									:loading='loadingPrev'
-								) Previous
+								div
+									v-btn.ma-1(
+										outlined
+										@click='setWallpaperByDirection("prev")'
+										:loading='loadingPrev'
+									) Previous
 
-								v-btn.ma-1(
-									outlined
-									@click='setWallpaperByDirection("next")'
-									:loading='loadingNext'
-								) Next
+									v-btn.ma-1(
+										outlined
+										@click='setWallpaperByDirection("next")'
+										:loading='loadingNext'
+									) Next
 
-								v-btn.ma-1(
-									outlined
-									@click='setWallpaperRandom()'
-									:loading='loadingRandom'
-								) Random
+									v-btn.ma-1(
+										outlined
+										@click='setWallpaperRandom()'
+										:loading='loadingRandom'
+									) Random
+
+								.d-flex.align-center.my-3
+									span.mr-1 Update every
+									v-text-field.shrink.mx-1(
+										outlined
+										dense
+										hide-details
+										type='number'
+										v-model='update.interval'
+									)
+									v-select.shrink.mx-1(
+										outlined
+										dense
+										hide-details
+										:items='["days", "minutes", "hours", "weeks"]'
+										v-model='update.unit'
+									)
 				
 				//- Album list
 				v-skeleton-loader(
@@ -118,7 +129,11 @@ export default {
 		appLoading: '', // Display an overlay over entire app with loading message
 		loadingNext: false,
 		loadingPrev: false,
-		loadingRandom: false
+		loadingRandom: false,
+		update: {
+			interval: 5,
+			unit: 'days'
+		}
 	}),
 
 	computed: {
