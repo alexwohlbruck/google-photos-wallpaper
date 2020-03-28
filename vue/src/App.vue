@@ -52,6 +52,7 @@
 										hide-details
 										type='number'
 										v-model='update.interval'
+										style='width: 65px'
 									)
 									v-select.shrink.mx-1(
 										outlined
@@ -59,6 +60,7 @@
 										hide-details
 										:items='["days", "minutes", "hours", "weeks"]'
 										v-model='update.unit'
+										style='width: 120px'
 									)
 				
 				//- Album list
