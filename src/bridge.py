@@ -2,6 +2,7 @@ import eel
 
 from src.google_api import GoogleApi
 from src.options import Options
+from src.scheduler import Scheduler
 
 # These methods are exposed to the Vue app
 # They are a bridge between JS and Python code
@@ -44,13 +45,13 @@ def set_selected_albums(selected_albums):
     Options.set_selected_albums(selected_albums)
 
 @eel.expose
-def get_current_wallpaper():
-    # Get current wall from user options
-    return Options.get_current_wallpaper()
-
-@eel.expose
 def get_user_options():
     return Options.get_user_options()
+
+@eel.expose
+def set_schedule(interval, unit):
+    Scheduler.start(interval, unit)
+
 
 @eel.expose
 def set_wallpaper(media_item):    
@@ -64,3 +65,8 @@ def set_wallpaper_by_direction(direction):
 @eel.expose
 def set_wallpaper_random():
     return Options.set_wallpaper_random()
+
+@eel.expose
+def get_current_wallpaper():
+    # Get current wall from user options
+    return Options.get_current_wallpaper()

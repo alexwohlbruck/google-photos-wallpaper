@@ -7,6 +7,7 @@ import schedule
 import time
 
 from src.scheduler import Scheduler
+from src.options import Options
 import src.bridge
 
 APP_TITLE = 'Google Photos Wallpaper'
@@ -24,6 +25,18 @@ def run_systray_icon():
 			text = 'Options',
 			action = open_ui,
 			default = True
+		),
+		pystray.MenuItem(
+			text = 'Next photo',
+			action = Options.set_wallpaper_next
+		),
+		pystray.MenuItem(
+			text = 'Previous photo',
+			action = Options.set_wallpaper_prev
+		),
+		pystray.MenuItem(
+			text = 'Random photo',
+			action = Options.set_wallpaper_random
 		)
 	)
 		

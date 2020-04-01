@@ -110,6 +110,13 @@ export const store = new Vuex.Store({
                 });
             });
         },
+        setSchedule (context, { interval, unit }) {
+            return new Promise(( res ) => {
+                window.eel.set_schedule(interval, unit)(() => {
+                    res();
+                });
+            });
+        },
         setSelectedAlbums (context, { selectedAlbums }) {
             return new Promise(( res ) => {
                 window.eel.set_selected_albums(selectedAlbums)(() => {

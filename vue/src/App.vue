@@ -51,16 +51,18 @@
 										dense
 										hide-details
 										type='number'
-										v-model='update.interval'
+										v-model='options.schedule.interval'
 										style='width: 65px'
+										@change='setSchedule'
 									)
 									v-select.shrink.mx-1(
 										outlined
 										dense
 										hide-details
 										:items='["minutes", "hours", "days", "weeks"]'
-										v-model='update.unit'
+										v-model='options.schedule.unit'
 										style='width: 120px'
+										@change='setSchedule'
 									)
 				
 				//- Album list
@@ -131,11 +133,7 @@ export default {
 		appLoading: '', // Display an overlay over entire app with loading message
 		loadingNext: false,
 		loadingPrev: false,
-		loadingRandom: false,
-		update: {
-			interval: 5,
-			unit: 'days'
-		}
+		loadingRandom: false
 	}),
 
 	computed: {
@@ -166,6 +164,13 @@ export default {
 			window.eel.set_selected_albums(this.$store.state.options.selectedAlbums)(() => {
 				this.$data.appLoading = '';
 			});
+		},
+		setSchedule: function() {
+			console.log(this.$store.state.options.schedule.unit)
+			this.$store.dispatch('setSchedule', {
+				interval: parseInt(this.$store.state.options.schedule.interval),
+				unit: this.$store.state.options.schedule.unit
+			})
 		},
 		setWallpaperByDirection: async function(direction) {
 			let directionCamel = direction.charAt(0).toUpperCase() + direction.slice(1)
