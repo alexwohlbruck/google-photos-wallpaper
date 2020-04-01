@@ -28,13 +28,15 @@ class Scheduler():
 			settings = options.get('schedule')
 			interval = settings.get('interval')
 			# unit = settings.get('unit')
+		
+		print('Updating wall every ' + str(interval) + ' ' + unit)
 
 		schedule.clear(WALL_SCHEDULE)
 
-		print('schedule ' + str(interval))
-
 		# TODO: Dynaimcally choose unit to schedule on
-		schedule.every(interval).seconds.do(job).tag(WALL_SCHEDULE)
+		schedule.every(interval).seconds.do(Options.set_wallpaper_random).tag(WALL_SCHEDULE)
+
+		Options.set_schedule(interval, unit)
 	
 	# Stop the schedule
 	@classmethod

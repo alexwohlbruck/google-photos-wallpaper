@@ -43,6 +43,20 @@ class Options():
             f.close()
 
         return options
+    
+    @classmethod
+    def save_options(cls, options):
+        with open(OPTIONS_PATH, 'w') as f:
+            json.dump(options, f)
+            f.close()
+    
+    # Scheduler options
+    @classmethod
+    def set_schedule(cls, interval, unit):
+        options = cls.get_user_options()
+        options['schedule']['interval'] = interval
+        options['schedule']['unit'] = unit
+        cls.save_options(options)
 
 
     # Wallpaper methods
@@ -50,9 +64,7 @@ class Options():
 
     @classmethod
     def get_current_wallpaper(cls):
-        with open(OPTIONS_PATH, 'r') as f:
-            options = json.load(f)
-            f.close()
+        options = cls.get_user_options()
 
         selected_albums = options.get('selectedAlbums', None)
         new_album = random.choice(selected_albums)
@@ -79,9 +91,7 @@ class Options():
     @classmethod
     def set_current_wallpaper(cls, media_item):
         # Update the current wallpaper data
-        with open(OPTIONS_PATH, 'r') as f:
-            options = json.load(f)
-            f.close()
+        options = cls.get_user_options()
 
         print('Setting wallpaper to ' + media_item['filename'])
 
@@ -97,9 +107,7 @@ class Options():
 
         options['currentWallpaper'] = media_item
 
-        with open(OPTIONS_PATH, 'w') as f:
-            json.dump(options, f)
-            f.close()
+        cls.save_options(options)
 
     @classmethod
     def set_wallpaper_next(cls):
@@ -112,10 +120,7 @@ class Options():
     @classmethod
     def set_wallpaper_by_direction(cls, direction = 'next'):
 
-        with open(OPTIONS_PATH, 'r') as f:
-            options = json.load(f)
-            f.close()
-
+        options = cls.get_user_options()
         current_wall = options.get('currentWallpaper', None)
 
         if (current_wall == None):
@@ -159,11 +164,29 @@ class Options():
     
     @classmethod
     def set_wallpaper_random(cls):
-        # Return the entire options config
-        with open(OPTIONS_PATH, 'r') as f:
-            options = json.load(f)
-            f.close()
-        return options
+        options = cls.get_user_options()
+
+        selected_albums = options.get('selectedAlbums', None)
+        new_album = random.choice(selected_albums)
+
+        new_album_id = new_album.get('id')
+        album_media_items = new_album.get('mediaItems', None)
+
+        # TODO: Store album title in options.json instead of retrieving it each time
+        if (new_album_id == 'FAVORITES'):
+            new_album['title'] = 'Favorites'
+        else:
+            new_album = GoogleApi.get_album(new_album_id)
+
+        new_wall = random.choice(album_media_items)
+
+        # Refresh base url
+        new_wall = GoogleApi.get_media_item(new_wall.get('id'))
+        new_album.pop('mediaItems', None)
+        new_wall['source'] = new_album
+
+        cls.set_current_wallpaper(new_wall)
+        return new_wall
     
 
     # Selected albums methods

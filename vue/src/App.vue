@@ -43,7 +43,6 @@
 										@click='setWallpaperRandom()'
 										:loading='loadingRandom'
 									) Random
-
 								.d-flex.align-center.my-3
 									span.mr-1 Update every
 									v-text-field.shrink.mx-1.hide-arrows(
@@ -166,11 +165,13 @@ export default {
 			});
 		},
 		setSchedule: function() {
-			console.log(this.$store.state.options.schedule.unit)
-			this.$store.dispatch('setSchedule', {
-				interval: parseInt(this.$store.state.options.schedule.interval),
-				unit: this.$store.state.options.schedule.unit
-			})
+			let interval = parseInt(this.$store.state.options.schedule.interval),
+				unit = this.$store.state.options.schedule.unit;
+
+			// Only update if there is a value inputted
+			if (interval) {
+				this.$store.dispatch('setSchedule', { interval, unit });
+			}
 		},
 		setWallpaperByDirection: async function(direction) {
 			let directionCamel = direction.charAt(0).toUpperCase() + direction.slice(1)
