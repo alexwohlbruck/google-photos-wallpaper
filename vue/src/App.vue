@@ -46,7 +46,7 @@
 
 								.d-flex.align-center.my-3
 									span.mr-1 Update every
-									v-text-field.shrink.mx-1(
+									v-text-field.shrink.mx-1.hide-arrows(
 										outlined
 										dense
 										hide-details
@@ -58,7 +58,7 @@
 										outlined
 										dense
 										hide-details
-										:items='["days", "minutes", "hours", "weeks"]'
+										:items='["minutes", "hours", "days", "weeks"]'
 										v-model='update.unit'
 										style='width: 120px'
 									)

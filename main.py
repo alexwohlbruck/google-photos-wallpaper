@@ -6,10 +6,10 @@ import threading
 import schedule
 import time
 
+from src.scheduler import Scheduler
 import src.bridge
 
 APP_TITLE = 'Google Photos Wallpaper'
-
 
 def open_ui():
 	eel.init('web')
@@ -29,18 +29,6 @@ def run_systray_icon():
 		
 	icon.run()
 
-def job():
-	print('test')
-
-from src.options import Options
-def run_wallpaper_scheduler(name):
-	schedule.every(10).seconds.do(Options.set_wallpaper_random)
-	while True:
-		schedule.run_pending()
-		time.sleep(1)
-
 if __name__ == '__main__':
-	scheduler = threading.Thread(target = run_wallpaper_scheduler, args = (1,))
-	scheduler.start()
-	# icon = threading.Thread(target = run_systray_icon, args = (1,))
+	Scheduler.start()
 	run_systray_icon()
