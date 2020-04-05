@@ -101,8 +101,11 @@ class GoogleApi():
             'pageSize': 100,
             'pageToken': page_token
         }
-        return cls.photos.mediaItems().search(body = body).execute()
-    
+        try:
+            return cls.photos.mediaItems().search(body = body).execute()
+        except:
+            return cls.get_favorites(page_size, page_token)
+
     @classmethod
     def get_all_favorites(cls, page_token = None):
         
@@ -123,7 +126,11 @@ class GoogleApi():
     @classmethod
     def get_album(cls, album_id):
         cls.ensure_valid_token()
-        return cls.photos.albums().get(albumId = album_id).execute()
+        try:
+            return cls.photos.albums().get(albumId = album_id).execute()
+        except:
+            # Sometimes returns SSLError. This is a one-off error, try again
+            return cls.get_album(album_id)
 
     @classmethod
     def get_albums(cls):
@@ -131,7 +138,10 @@ class GoogleApi():
         body = {
             'pageSize': 100
         }
-        return cls.photos.albums().list(pageSize = 50).execute()
+        try:
+            return cls.photos.albums().list(pageSize = 50).execute()
+        except:
+            return cls.get_albums()
 
     @classmethod
     def get_album_media_items(cls, album_id, page_size = None, page_token = None):
@@ -141,8 +151,11 @@ class GoogleApi():
             'pageSize': 100,
             'pageToken': page_token
         }
-        return cls.photos.mediaItems().search(body = body).execute()
-    
+        try:
+            return cls.photos.mediaItems().search(body = body).execute()
+        except:
+            return cls.get_album_media_items(album_id, page_size, page_token)
+
     @classmethod
     def get_all_album_media_items(cls, album_id, page_token = None):
         # Retreive entire album content recursively
@@ -161,4 +174,7 @@ class GoogleApi():
     @classmethod
     def get_media_item(cls, media_item_id):
         cls.ensure_valid_token()
-        return cls.photos.mediaItems().get(mediaItemId = media_item_id).execute()
+        try:
+            return cls.photos.mediaItems().get(mediaItemId = media_item_id).execute()
+        except:
+            return cls.get_media_item(media_item_id)

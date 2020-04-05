@@ -132,14 +132,7 @@ export default {
 		var that = this;
 		window.eel.expose(wallpaper_changed);
 		function wallpaper_changed(mediaItem) {
-			console.log({mediaItem})
-			that.$store.dispatch('setWallpaper', {
-				mediaItem,
-				source: {
-					id: 'FAVORITES',
-					title: 'Favorites'
-				}
-			})
+			that.$store.commit('setCurrentWallpaper', { mediaItem })
 		}
 	},
 

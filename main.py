@@ -44,12 +44,6 @@ def run_systray_icon():
 
 if __name__ == '__main__':
 	# run_systray_icon()
-	thread = threading.Thread(target = open_ui)
-	thread.start()
-
 	Scheduler.start()
-	print(eel._js_functions)
-
-	time.sleep(5)
-
-	print(eel._js_functions)
+	ui = threading.Thread(target = open_ui)
+	ui.start()

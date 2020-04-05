@@ -16,7 +16,7 @@ def start_loop():
 thread = threading.Thread(target = start_loop)
 thread.start()
 
-def job():
+def test():
 	print('job')
 
 class Scheduler():

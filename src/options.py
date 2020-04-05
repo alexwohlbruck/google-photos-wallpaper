@@ -93,7 +93,9 @@ class Options():
     def set_current_wallpaper(cls, media_item):
         # Update the current wallpaper data
         options = cls.get_user_options()
-        eel.wallpaper_changed(media_item)
+
+        if (hasattr(eel, 'wallpaper_changed')):
+            eel.wallpaper_changed(media_item)
 
         # TODO: This should only work on windows. Ensure multiplatform compatibility
         # Download full res image and change wallpaper
