@@ -128,6 +128,21 @@ export default {
 		await this.$store.dispatch('getUserOptions');
 	},
 
+	mounted() {
+		var that = this;
+		window.eel.expose(wallpaper_changed);
+		function wallpaper_changed(mediaItem) {
+			console.log({mediaItem})
+			that.$store.dispatch('setWallpaper', {
+				mediaItem,
+				source: {
+					id: 'FAVORITES',
+					title: 'Favorites'
+				}
+			})
+		}
+	},
+
 	data: () => ({
 		appLoading: '', // Display an overlay over entire app with loading message
 		loadingNext: false,

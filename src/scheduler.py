@@ -21,20 +21,27 @@ def job():
 
 class Scheduler():
 
-	# Restart the schedule on a new interval
 	@classmethod
-	def start(cls, interval = None, unit = 'seconds'):
+	def start(cls, interval = None, unit = 'minutes'):
+		"""
+		Restart the schedule on a new interval
+		Arguments:
+		interval (int): The time between wallpaper change
+		unit (string)['minutes' | 'hours' | 'days' | 'weeks']: Unit of time used
+		"""
+
 		if interval == None:
 			settings = options.get('schedule')
 			interval = settings.get('interval')
-			# unit = settings.get('unit')
+			unit = settings.get('unit')
 		
 		print('Updating wall every ' + str(interval) + ' ' + unit)
 
 		schedule.clear(WALL_SCHEDULE)
 
 		# TODO: Dynaimcally choose unit to schedule on
-		schedule.every(interval).seconds.do(Options.set_wallpaper_random).tag(WALL_SCHEDULE)
+		job = getattr(schedule.every(interval), unit)
+		job.do(Options.set_wallpaper_random).tag(WALL_SCHEDULE)
 
 		Options.set_schedule(interval, unit)
 	

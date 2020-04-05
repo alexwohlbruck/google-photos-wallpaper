@@ -3,6 +3,7 @@ import ctypes
 import urllib
 import os
 import random
+import eel
 
 from src.google_api import GoogleApi
 
@@ -92,8 +93,7 @@ class Options():
     def set_current_wallpaper(cls, media_item):
         # Update the current wallpaper data
         options = cls.get_user_options()
-
-        print('Setting wallpaper to ' + media_item['filename'])
+        eel.wallpaper_changed(media_item)
 
         # TODO: This should only work on windows. Ensure multiplatform compatibility
         # Download full res image and change wallpaper
