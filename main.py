@@ -43,7 +43,7 @@ def run_systray_icon():
 	icon.run()
 
 if __name__ == '__main__':
-	# run_systray_icon()
 	Scheduler.start()
 	ui = threading.Thread(target = open_ui)
 	ui.start()
+	# run_systray_icon()

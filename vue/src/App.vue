@@ -130,10 +130,12 @@ export default {
 
 	mounted() {
 		var that = this;
-		window.eel.expose(wallpaper_changed);
-		function wallpaper_changed(mediaItem) {
+		console.log(window.eel);
+		let onWallChanged = mediaItem => {
 			that.$store.commit('setCurrentWallpaper', { mediaItem })
 		}
+		window.eel.expose(onWallChanged, 'wallpaper_changed');
+		
 	},
 
 	data: () => ({

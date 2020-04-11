@@ -91,10 +91,15 @@ class Options():
 
     @classmethod
     def set_current_wallpaper(cls, media_item):
+        
+        print('Setting wallpaper: ' + media_item['filename']);
+
         # Update the current wallpaper data
         options = cls.get_user_options()
 
+        print(eel._js_functions)
         if (hasattr(eel, 'wallpaper_changed')):
+            print('running func')
             eel.wallpaper_changed(media_item)
 
         # TODO: This should only work on windows. Ensure multiplatform compatibility
@@ -166,6 +171,7 @@ class Options():
     
     @classmethod
     def set_wallpaper_random(cls):
+
         options = cls.get_user_options()
 
         selected_albums = options.get('selectedAlbums', None)

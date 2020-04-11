@@ -113,6 +113,8 @@ class GoogleApi():
         # TODO: Consider merging the two methods, as well as get_favorites and get_album_media_items
         # TODO: They are operating on the same API endpoint, it makes sense to merge them
 
+        print('Get favorites: page token: ' + str(page_token))
+
         page = cls.get_favorites(page_size = 100, page_token = page_token)
         media_items = page.get('mediaItems')
         next_page_token = page.get('nextPageToken', None)
@@ -145,6 +147,9 @@ class GoogleApi():
 
     @classmethod
     def get_album_media_items(cls, album_id, page_size = None, page_token = None):
+
+        print('Getting media items: album: ' + album_id + ' page: ' + page_token)
+
         cls.ensure_valid_token()
         body = {
             'albumId': album_id,
