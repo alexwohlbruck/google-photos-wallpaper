@@ -1,7 +1,11 @@
-.vscode/
-env/
+/.vscode/
+/env/
+node_modules/
 __pycache__
-node_modules
+
+# Pyinstaller junk
+/build/
+/dist/
 
 # Google API config
 client_secrets.json

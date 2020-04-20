@@ -6,8 +6,9 @@ import random
 import eel
 
 from src.google_api import GoogleApi
+from src.resource_path import resource_path
 
-OPTIONS_PATH = 'storage/options.json'
+OPTIONS_PATH = resource_path('storage/options.json')
 FAVORITES = 'FAVORITES'
 
 # Helper methods
@@ -105,8 +106,9 @@ class Options():
         # TODO: This should only work on windows. Ensure multiplatform compatibility
         # Download full res image and change wallpaper
         image_url = get_large_url(media_item)
-        urllib.request.urlretrieve(image_url, 'storage/wall.jpg')
-        path = os.path.abspath('storage/wall.jpg')
+        path = resource_path('storage/wall.jpg')
+        urllib.request.urlretrieve(image_url, path)
+        path = path#os.path.abspath('storage/wall.jpg')
         SPI = 20
         SPIF = 2
         ctypes.windll.user32.SystemParametersInfoW(SPI, 0, path, SPIF)

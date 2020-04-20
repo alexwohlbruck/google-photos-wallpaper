@@ -1,3 +1,4 @@
+
 import eel
 from PIL import Image
 import pystray
@@ -9,8 +10,12 @@ import time
 from src.scheduler import Scheduler
 from src.options import Options
 import src.bridge
+from src.resource_path import resource_path
 
 APP_TITLE = 'Google Photos Wallpaper'
+
+print('test')
+
 
 def open_ui():
 	eel.init('web')
@@ -19,7 +24,7 @@ def open_ui():
 def run_systray_icon():
 	icon = pystray.Icon('test name')
 	icon.title = APP_TITLE
-	icon.icon = Image.open('src/icon.png')
+	icon.icon = Image.open(resource_path('src/icon.png'))
 	icon.menu = pystray.Menu(
 		pystray.MenuItem(
 			text = 'Options',

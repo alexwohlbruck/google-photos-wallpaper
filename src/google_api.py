@@ -8,7 +8,9 @@ from google_auth_oauthlib.flow import Flow
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-PICKLE_PATH = 'storage/token.pickle'
+from src.resource_path import resource_path
+
+PICKLE_PATH = resource_path('storage/token.pickle')
 
 def deco(cls):
     """
@@ -61,7 +63,7 @@ class GoogleApi():
             # Retrieve refresh token and other creds from Oauth flow
             else:
                 flow = InstalledAppFlow.from_client_secrets_file(
-                    os.path.abspath('src/client_secrets.json'),
+                    resource_path('src/client_secrets.json'),# os.path.abspath(),
                     scopes = [
                         'openid',
                         'https://www.googleapis.com/auth/userinfo.email',
