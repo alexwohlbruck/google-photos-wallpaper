@@ -7,6 +7,7 @@ __pycache__
 /build/
 /dist/
 /pyu-data/
+/.pyupdater/
 # Keypack for PyUpdater
 /keypack.pyu
 
