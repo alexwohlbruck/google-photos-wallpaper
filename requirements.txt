@@ -11,7 +11,7 @@ cffi==1.14.0
 chardet==3.0.4
 Click==7.0
 colorama==0.4.1
-cryptography==2.8
+cryptography==3.2
 distlib==0.3.0
 dsdev-utils==1.0.4
 ed25519==1.5
