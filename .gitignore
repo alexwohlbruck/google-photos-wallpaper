@@ -6,6 +6,7 @@ __pycache__
 # PyInstaller junk
 /build/
 /dist/
+/pyu-data/
 # Keypack for PyUpdater
 /keypack.pyu
 
