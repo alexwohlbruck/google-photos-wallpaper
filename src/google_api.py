@@ -150,7 +150,7 @@ class GoogleApi():
     @classmethod
     def get_album_media_items(cls, album_id, page_size = None, page_token = None):
 
-        print('Getting media items: album: ' + album_id + ' page: ' + page_token)
+        print('Getting media items: album: ' + album_id + ' page: ' + str(page_token))
 
         cls.ensure_valid_token()
         body = {

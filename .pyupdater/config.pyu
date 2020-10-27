@@ -1,0 +1,60 @@
+{
+  "config_dir": "C:\\google-photos-wallpaper\\.pyupdater",
+  "filename": "C:\\google-photos-wallpaper\\.pyupdater\\config.pyu",
+  "count": 0,
+  "app_config": {
+    "APP_NAME": "gpwallpaper",
+    "CLIENT_CONFIG_PATH": [
+      "client_config.py"
+    ],
+    "COMPANY_NAME": "Alex Wohlbruck",
+    "PLUGIN_CONFIGS": {},
+    "UPDATE_PATCHES": true,
+    "MAX_DOWNLOAD_RETRIES": 3,
+    "HTTP_TIMEOUT": 30,
+    "UPDATE_URLS": [
+      "https://example.com"
+    ],
+    "DATA_DIR": "C:\\google-photos-wallpaper"
+  },
+  "keypack": {
+    "client": {
+      "offline_public": "71y9K6fxzDoIUYBXYLzEp2wgaC9KBZ6y5dMIOj6iZPs"
+    },
+    "repo": {
+      "app_private": "h6Xm/2UI2Fi8JAzxjwdWnoLx+tAh85RyyVLBxLmgg4c"
+    },
+    "upload": {
+      "app_public": "t3LmHHu/xcuS0Bbzq1Cn0kzZfTnwobVO1nrwNDCMw24",
+      "signature": "XMMPRvgmdQ+9ME1cupaavOB3gAWC4oAjeLC4KZ9IC6YVuZpQ3ZJwPpfH23OF1sIs918KWa67SmXU1MVKI0TICg"
+    }
+  },
+  "version_meta": {
+    "updates": {
+      "gpwallpaper": {
+        "1.0.0.2.0": {
+          "win": {
+            "file_hash": "5355ae7460fa04547db94f1a7848cec482cb11ca377701f5c9662da55ad20262",
+            "file_size": 35285631,
+            "filename": "gpwallpaper-win-1.0.0.zip"
+          }
+        }
+      }
+    },
+    "latest": {
+      "gpwallpaper": {
+        "stable": {
+          "win": "1.0.0.2.0"
+        }
+      }
+    }
+  },
+  "py_repo_config": {
+    "patches": {},
+    "package": {
+      "gpwallpaper": {
+        "win": "1.0.0.2.0"
+      }
+    }
+  }
+}

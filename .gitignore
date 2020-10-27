@@ -3,9 +3,11 @@
 node_modules/
 __pycache__
 
-# Pyinstaller junk
+# PyInstaller junk
 /build/
 /dist/
+# Keypack for PyUpdater
+/keypack.pyu
 
 # Google API config
 client_secrets.json
