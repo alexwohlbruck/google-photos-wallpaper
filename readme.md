@@ -1,3 +1,5 @@
+<img src="https://i.imgur.com/tzSxumP.jpg" width="50">
+
 # Google Photos Wallpaper
 
 This is a utility that will update your desktop wallpaper from your Google Photos library on a custom schedule.
@@ -14,7 +16,7 @@ This is a utility that will update your desktop wallpaper from your Google Photo
 
 ### Production version
 
-There are no executable available for installation yet. They will be available soon on the releases page.
+There are no executable available for installation yet. They will be available soon on the [releases](https://github.com/alexwohlbruck/google-photos-wallpaper/releases) page.
 
 ### Development version
 
@@ -27,31 +29,31 @@ cd google-photos-wallpaper
 ```
 
 
-Create and activate a python virtual environment
+Create and activate a python virtual environment.
 ```sh
 python3 -m venv env
 source env/Scripts/activate
 ```
 
-Install packages using pip
+Install packages using pip.
 ```sh
 pip install -r requirements.txt
 ```
 
-Run the python app
+Run the python app.
 ```sh
 py main.py
 ```
 
 ### Build and distribute
 
-Build the executable using pyupdater
+Build the executable using pyupdater.
 ```sh
 pyupdater build win.spec --app-version=X.X.X
 ```
-Pass the flag `--pyinstaller-log-info` to see pyinstaller build logs
+Pass the flag `--pyinstaller-log-info` to see pyinstaller build logs.
 
-The app will be built to `/pyu-data/new/gpwallpaper-win-X.X.X.zip`
+The app will be built to `/pyu-data/new/gpwallpaper-win-X.X.X.zip`.
 
 ## FAQ
 
