@@ -2,7 +2,7 @@ altgraph==0.17
 appdirs==1.4.3
 astroid==2.3.3
 bcrypt==3.1.7
-bottle==0.12.18
+bottle==0.12.19
 bottle-websocket==0.2.9
 bsdiff4==1.1.5
 cachetools==4.0.0
