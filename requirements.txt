@@ -55,7 +55,7 @@ pytz==2019.3
 PyUpdater==3.1.1
 PyUpdater-SCP-Plugin==4.0.3
 pywebview==3.2
-pywin32==224
+pywin32==301
 pywin32-ctypes==0.2.0
 requests==2.23.0
 requests-oauthlib==1.3.0
