@@ -36,7 +36,7 @@ source env/Scripts/activate
 
 3. Install packages using pip.
 ```sh
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
 
 4. Create a [Google Cloud Platform](https://console.cloud.google.com/) project.
@@ -46,7 +46,7 @@ pip install -r requirements.txt
 
 5. Run the python app.
 ```sh
-py main.py
+python3 main.py
 ```
 
 ### Build and distribute
