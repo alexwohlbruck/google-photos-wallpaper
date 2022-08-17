@@ -29,11 +29,12 @@ class Scheduler():
 		interval (int): The time between wallpaper change
 		unit (string)['minutes' | 'hours' | 'days' | 'weeks']: Unit of time used
 		"""
+		print(options)
 
 		if interval == None:
-			settings = options.get('schedule')
-			interval = settings.get('interval')
-			unit = settings.get('unit')
+			schedule_options = options.get('schedule')
+			interval = schedule_options.get('interval')
+			unit = schedule_options.get('unit')
 		
 		print('Updating wall every ' + str(interval) + ' ' + unit)
 

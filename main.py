@@ -4,7 +4,6 @@ import eel
 from PIL import Image
 import pystray
 
-
 import threading
 import schedule
 import time
@@ -27,24 +26,24 @@ def print_status_info(info):
     status = info.get(u'status')
     print(downloaded, total, status)
 
-print('Initializing client')
-client = Client(
-	ClientConfig(), refresh=True, progress_hooks=[print_status_info]
-)
-print('Client initialized')
+# print('Initializing client')
+# client = Client(
+# 	ClientConfig(), refresh=True, progress_hooks=[print_status_info]
+# )
+# print('Client initialized')
 
-print('Checking for updates')
-app_update = client.update_check(APP_NAME, APP_VERSION)
+# print('Checking for updates')
+# app_update = client.update_check(APP_NAME, APP_VERSION)
 
-if app_update is not None:
-	print('Update available, downloading')
-	app_update.download(background=True)
+# if app_update is not None:
+# 	print('Update available, downloading')
+# 	app_update.download(background=True)
 
-	if app_update.is_downloaded():
-		print('Downloaded update, restarting')
-		app_update.extract_restart()
-else:
-	print("No updates")
+# 	if app_update.is_downloaded():
+# 		print('Downloaded update, restarting')
+# 		app_update.extract_restart()
+# else:
+# 	print("No updates")
 
 def open_ui():
 	eel.init('web')

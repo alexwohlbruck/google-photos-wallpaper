@@ -4,12 +4,19 @@ import urllib
 import os
 import random
 import eel
+from src.wallpaper import set_wallpaper
 
 from src.google_api import GoogleApi
 from src.resource_path import resource_path
 
 OPTIONS_PATH = resource_path('storage/options.json')
 FAVORITES = 'FAVORITES'
+DEFAULT_OPTIONS = {
+    'schedule': {
+        'interval': 5,
+        'unit': 'minutes',
+    }
+}
 
 # Helper methods
 def find_in_list_by_val(list_, key, val):
@@ -34,39 +41,45 @@ class Options():
     # Generic options methods
 
     @classmethod
-    def get_user_options(cls):
+    def get_user_options(this):
         # Get the set wallpaper data
         
         # NOTE: Access to `baseUrl` will expire after session ends,
         # Use GoogleApi.get_media_item to refresh it
-
-        with open(OPTIONS_PATH, 'r') as f:
-            options = json.load(f)
-            f.close()
+        
+        if os.path.exists(OPTIONS_PATH):
+            with open(OPTIONS_PATH, 'r') as options_file:
+                options = json.load(options_file)
+        else:
+            options = DEFAULT_OPTIONS
 
         return options
     
     @classmethod
-    def save_options(cls, options):
+    def save_options(this, options):
+        # If /storage doesn't exist, create it
+        if not os.path.exists(resource_path('storage')):
+            os.makedirs(resource_path('storage'))
+        
         with open(OPTIONS_PATH, 'w') as f:
             json.dump(options, f)
             f.close()
     
     # Scheduler options
     @classmethod
-    def set_schedule(cls, interval, unit):
-        options = cls.get_user_options()
+    def set_schedule(this, interval, unit):
+        options = this.get_user_options()
         options['schedule']['interval'] = interval
         options['schedule']['unit'] = unit
-        cls.save_options(options)
+        this.save_options(options)
 
 
     # Wallpaper methods
     # TODO: Move these into Wallpaper class
 
     @classmethod
-    def get_current_wallpaper(cls):
-        options = cls.get_user_options()
+    def get_current_wallpaper(this):
+        options = this.get_user_options()
 
         selected_albums = options.get('selectedAlbums', None)
         new_album = random.choice(selected_albums)
@@ -87,49 +100,51 @@ class Options():
         new_album.pop('mediaItems', None)
         new_wall['source'] = new_album
 
-        cls.set_current_wallpaper(new_wall)
+        this.set_current_wallpaper(new_wall)
         return new_wall
 
     @classmethod
-    def set_current_wallpaper(cls, media_item):
+    def set_current_wallpaper(this, media_item):
         
-        print('Setting wallpaper: ' + media_item['filename']);
+        file_prefix = 'wall_'
+        filename = file_prefix + media_item.get('filename')
+        
+        print('Setting wallpaper: ' + filename);
+        
+        # Delete files in /storage that are named wall_*
+        for file in os.listdir(resource_path('storage')):
+            if file.startswith(file_prefix):
+                os.remove(resource_path('storage/' + file))
 
         # Update the current wallpaper data
-        options = cls.get_user_options()
+        options = this.get_user_options()
 
-        print(eel._js_functions)
-        if (hasattr(eel, 'wallpaper_changed')):
-            print('running func')
-            eel.wallpaper_changed(media_item)
-
-        # TODO: This should only work on windows. Ensure multiplatform compatibility
         # Download full res image and change wallpaper
         image_url = get_large_url(media_item)
-        path = resource_path('storage/wall.jpg')
+        path = resource_path('storage/' + filename + '.jpg')
         urllib.request.urlretrieve(image_url, path)
-        path = path#os.path.abspath('storage/wall.jpg')
-        SPI = 20
-        SPIF = 2
-        ctypes.windll.user32.SystemParametersInfoW(SPI, 0, path, SPIF)
+        
+        set_wallpaper(path)
 
-
+        if (hasattr(eel, 'wallpaper_changed')):
+            eel.wallpaper_changed(media_item)
+            
         options['currentWallpaper'] = media_item
 
-        cls.save_options(options)
+        this.save_options(options)
 
     @classmethod
-    def set_wallpaper_next(cls):
-        return cls.set_wallpaper_by_direction(direction = 'next')
+    def set_wallpaper_next(this):
+        return this.set_wallpaper_by_direction(direction = 'next')
     
     @classmethod
-    def set_wallpaper_prev(cls):
-        return cls.set_wallpaper_by_direction(direction = 'prev')
+    def set_wallpaper_prev(this):
+        return this.set_wallpaper_by_direction(direction = 'prev')
 
     @classmethod
-    def set_wallpaper_by_direction(cls, direction = 'next'):
+    def set_wallpaper_by_direction(this, direction = 'next'):
 
-        options = cls.get_user_options()
+        options = this.get_user_options()
         current_wall = options.get('currentWallpaper', None)
 
         if (current_wall == None):
@@ -168,13 +183,13 @@ class Options():
             new_wall = GoogleApi.get_media_item(new_wall_id)
             new_wall['source'] = current_album
 
-            cls.set_current_wallpaper(new_wall)
+            this.set_current_wallpaper(new_wall)
             return new_wall
     
     @classmethod
-    def set_wallpaper_random(cls):
+    def set_wallpaper_random(this):
 
-        options = cls.get_user_options()
+        options = this.get_user_options()
 
         selected_albums = options.get('selectedAlbums', None)
         new_album = random.choice(selected_albums)
@@ -195,14 +210,14 @@ class Options():
         new_album.pop('mediaItems', None)
         new_wall['source'] = new_album
 
-        cls.set_current_wallpaper(new_wall)
+        this.set_current_wallpaper(new_wall)
         return new_wall
     
 
     # Selected albums methods
 
     @classmethod
-    def set_selected_albums(cls, selected_items):
+    def set_selected_albums(this, selected_items):
         with open(OPTIONS_PATH, 'r') as f:
             options = json.load(f)
             f.close()

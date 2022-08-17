@@ -86,10 +86,10 @@ class GoogleApi():
         """
         Rebuild API services for a new set of credentials
         """
-        cls.photos = build('photoslibrary', 'v1', credentials = creds)
+        cls.photos = build('photoslibrary', 'v1', credentials=creds, static_discovery=False)
 
     @classmethod
-    def get_favorites(cls, page_size = None, page_token = None):
+    def get_favorites(cls, page_size=None, page_token=None):
         cls.ensure_valid_token()
         body = {
             'filters': {

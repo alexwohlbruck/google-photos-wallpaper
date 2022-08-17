@@ -20,7 +20,7 @@ There are no executable available for installation yet. They will be available s
 
 ### Development version
 
-To compile the app, first clone the repository in the desired location on your computer.
+1. To compile the app, first clone the repository in the desired location on your computer.
 
 ```sh
 git clone https://github.com/alexwohlbruck/google-photos-wallpaper.git
@@ -28,19 +28,23 @@ git clone https://github.com/alexwohlbruck/google-photos-wallpaper.git
 cd google-photos-wallpaper
 ```
 
-
-Create and activate a python virtual environment.
+2. Create and activate a python virtual environment.
 ```sh
 python3 -m venv env
 source env/Scripts/activate
 ```
 
-Install packages using pip.
+3. Install packages using pip.
 ```sh
 pip install -r requirements.txt
 ```
 
-Run the python app.
+4. Create a [Google Cloud Platform](https://console.cloud.google.com/) project.
+   - Enable the `Photos Library API`.
+   - In the credentials tab, create an OAuth 2.0 client ID and download the secrets file
+   - Name the file `client_secrets.json` and place in your /src directory.
+
+5. Run the python app.
 ```sh
 py main.py
 ```
