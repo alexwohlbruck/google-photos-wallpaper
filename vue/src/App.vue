@@ -7,18 +7,18 @@
 
 		v-content.pt-4
 			v-container
-				preview
+				current-wallpaper
 				album-selector
 </template>
 
 <script>
-import Preview from '@/components/Preview.vue';
+import CurrentWallpaper from '@/components/CurrentWallpaper.vue';
 import AlbumSelector from '@/components/AlbumSelector.vue';
 
 export default {
 	name: 'App',
 	components: {
-		Preview,
+		CurrentWallpaper,
 		AlbumSelector,
 	},
 	async beforeCreate() {

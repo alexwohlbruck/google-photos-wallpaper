@@ -1,105 +1,104 @@
 <template lang="pug">
-.d-flex.flex-column.flex-sm-row.mb-12
-  .d-flex.justify-center
-    v-skeleton-loader(type='image' v-if='!options.currentWallpaper.baseUrl')
-    v-img.round.elevation-22(v-if='options.currentWallpaper.baseUrl' :src='options.currentWallpaper.baseUrl' max-height='300' max-width='50vw')
-
-  //- Current item details
-  .py-5.pa-sm-8
-    v-skeleton-loader(type='sentences, heading' v-if='!options.currentWallpaper.source')
-    div(v-if='options.currentWallpaper.source')
-      h3.headline.font-weight-bold Current wallpaper
-      
-      v-breadcrumbs.px-1.pt-1.pb-2(:items='breadcrumbs')
-        template(v-slot:divider)
-          v-icon mdi-arrow-right
-
-      .d-flex(style='grid-gap: 8px')
-        v-btn(
-          outlined
-          @click='setWallpaperByDirection("prev")'
-          :loading='loadingPrev'
-        )
-          v-icon.mr-1 mdi-arrow-left
-
-        v-btn(
-          outlined
-          @click='setWallpaperRandom()'
-          :loading='loadingRandom'
-        )
-          v-icon.mr-1 mdi-shuffle-variant
-
-        v-btn(
-          outlined
-          @click='setWallpaperByDirection("next")'
-          :loading='loadingNext'
-        )
-          v-icon.mr-1 mdi-arrow-right
-
-      .d-flex.align-center.my-3
-        span.mr-1 Update every
-        v-text-field.shrink.mx-1.hide-arrows(
-          outlined
-          dense
-          hide-details
-          type='number'
-          v-model='options.schedule.interval'
-          style='width: 65px'
-          @change='setSchedule'
-        )
-        v-select.shrink.mx-1(
-          outlined
-          dense
-          hide-details
-          :items='["minutes", "hours", "days", "weeks"]'
-          v-model='options.schedule.unit'
-          style='width: 120px'
-          @change='setSchedule'
-        )
+div
+  v-skeleton-loader(type='image' v-if='!imageUrl')
+  v-img.round.elevation-22(
+    v-else
+    :src='imageUrl'
+    :aspect-ratio='aspectRatio'
+  )
+    .menu-bar
+      .menu-left
+        v-icon.apple-logo(color='white') mdi-apple
+        .menu-item(v-for='i in menuItemsLeft' :style='{width: `${i}%`}')
+      v-spacer
+      .menu-right.display-flex.justify-end
+        .menu-item(v-for='i in 6')
+        .menu-item.time
+    
+    .dock
+      .dock-item(v-for='i in dockItems' :style='{background: i}')
 </template>
 
 <script>
-import { mapState } from 'vuex';
-
 export default {
   name: 'Preview',
-  data: () => ({
-		loadingNext: false,
-		loadingPrev: false,
-		loadingRandom: false
-  }),
-	computed: {
-		...mapState([
-			'options'
-		]),
-		breadcrumbs: function() {
-			return [
-				{ text: this.options.currentWallpaper.source.title },
-				{ text: this.options.currentWallpaper.filename }
-			]
-		},
-	},
-  methods: {
-		setSchedule: function() {
-			let interval = parseInt(this.$store.state.options.schedule.interval),
-				unit = this.$store.state.options.schedule.unit;
-
-			// Only update if there is a value inputted
-			if (interval) {
-				this.$store.dispatch('setSchedule', { interval, unit });
-			}
-		},
-		setWallpaperByDirection: async function(direction) {
-			let directionCamel = direction.charAt(0).toUpperCase() + direction.slice(1)
-			this.$data[`loading${directionCamel}`] = true;
-			await this.$store.dispatch('setWallpaperByDirection', { direction });
-			this.$data[`loading${directionCamel}`] = false;
-		},
-		setWallpaperRandom: async function() {
-			this.$data.loadingRandom = true;
-			await this.$store.dispatch('setWallpaperRandom');
-			this.$data.loadingRandom = false;
-		},
+  props: ['imageUrl', 'aspectRatio'],
+  computed: {
+    menuItemsLeft() {
+      return [...Array(6).keys()].map(() => {
+        return Math.ceil(Math.random() * 7) + 7;
+      })
+    },
+    dockItems() {
+      return [...Array(15).keys()].map(() => {
+        return `hsl(${Math.random() * 360}, ${(Math.random() * 30) + 70}%, ${(Math.random() * 50) + 20}%)`;
+      })
+    }
   }
 }
 </script>
+
+<style lang="scss">
+  .frosted-glass {
+    backdrop-filter: blur(20px) saturate(2) brightness(.9);
+  }
+  .menu-bar {
+    @extend .frosted-glass;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4%;
+    display: flex;
+
+    .apple-logo {
+      margin-left: 4%;
+      margin-right: 1%;
+      font-size: max(1.5vw, 5px) !important;
+    }
+
+    .menu-item {
+      width: 5px;
+      height: 20%;
+      margin: 0 5px;
+      background-color: rgba(255, 255, 255, .5);
+      border-radius: 5px;
+
+      &.time {
+        width: 15%;
+      }
+    }
+
+    .menu-left, .menu-right {
+      display: flex;
+      position: relative;
+      height: 100%;
+      width: 40%;
+      align-items: center;
+    }
+  }
+
+  .dock {
+    @extend .frosted-glass;
+
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 8%;
+    width: 66%;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 10px;
+
+    .dock-item {
+      height: 70%;
+      aspect-ratio: 1;
+      margin: .5%;
+      border-radius: 5px;
+    }
+  }
+
+</style>

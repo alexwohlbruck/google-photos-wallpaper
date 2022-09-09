@@ -9,6 +9,10 @@ from src.scheduler import Scheduler
 # They are a bridge between JS and Python code
 
 @eel.expose
+def get_system_info():
+    return Options.get_system_info()
+
+@eel.expose
 def is_authenticated():
     # Check if user has valid credentials
     return GoogleApi.is_authenticated()

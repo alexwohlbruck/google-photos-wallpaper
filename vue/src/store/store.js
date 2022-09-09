@@ -5,7 +5,7 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
     state: {
-		favorites: [],
+        favorites: [],
         albums: [],
         options: {
             currentWallpaper: {},
@@ -13,18 +13,14 @@ export const store = new Vuex.Store({
         }
     },
 
-    getters: {
-
-    },
-
     mutations: {
-        setCurrentWallpaper (state, { mediaItem }) {
+        setCurrentWallpaper(state, { mediaItem }) {
             state.options.currentWallpaper = mediaItem;
         },
-        setFavorites (state, { mediaItems }) {
+        setFavorites(state, { mediaItems }) {
             state.favorites = mediaItems;
         },
-        setAlbums (state, { albums }) {
+        setAlbums(state, { albums }) {
             state.albums = albums;
         },
         setAlbum(state, { albumId, mediaItems }) {
@@ -39,58 +35,61 @@ export const store = new Vuex.Store({
         setUserOptions(state, { options }) {
             options.selectedAlbums = options.selectedAlbums.map(a => a.id);
             state.options = options;
-        }
+        },
+        setSystemInfo(state, { systemInfo }) {
+            state.systemInfo = systemInfo;
+        },
     },
 
     actions: {
-        setWallpaper ({ commit }, { mediaItem, source }) {
+        setWallpaper({ commit }, { mediaItem, source }) {
             mediaItem.source = {
                 id: source.id,
                 title: source.title
             };
-            return new Promise(( res ) => {
+            return new Promise((res) => {
                 window.eel.set_wallpaper(mediaItem)(() => {
                     commit('setCurrentWallpaper', { mediaItem });
                     res();
                 });
             });
         },
-        setWallpaperByDirection ({ commit }, { direction }) {
-            return new Promise(( res => {
+        setWallpaperByDirection({ commit }, { direction }) {
+            return new Promise((res => {
                 window.eel.set_wallpaper_by_direction(direction)(newWallpaper => {
                     commit('setCurrentWallpaper', { mediaItem: newWallpaper });
                     res();
                 });
             }));
         },
-        setWallpaperRandom ({ commit }) {
-            return new Promise(( res => {
+        setWallpaperRandom({ commit }) {
+            return new Promise((res => {
                 window.eel.set_wallpaper_random()(newWallpaper => {
                     commit('setCurrentWallpaper', { mediaItem: newWallpaper });
                     res();
                 })
             }));
         },
-        getFavorites ({ commit }) {
+        getFavorites({ commit }) {
             window.eel.get_favorites()(({ mediaItems }) => {
                 commit('setFavorites', { mediaItems });
             });
         },
-        getAlbums ({ commit }) {
+        getAlbums({ commit }) {
             window.eel.get_albums()(({ albums }) => {
                 commit('setAlbums', { albums });
             });
         },
-        getAlbum ({ commit }, { albumId }) {
+        getAlbum({ commit }, { albumId }) {
             window.eel.get_album_media_items(albumId)(({ mediaItems }) => {
-				commit('setAlbum', {
+                commit('setAlbum', {
                     albumId,
                     mediaItems
                 });
-			});
+            });
         },
-        getUserOptions ({ commit }) {
-            return new Promise(( res ) => {
+        getUserOptions({ commit }) {
+            return new Promise((res) => {
                 window.eel.get_user_options()(options => {
 
                     delete options.currentWallpaper.baseUrl; // Assume baseUrl is invalid
@@ -100,7 +99,7 @@ export const store = new Vuex.Store({
 
                     // Save source data from original object
                     let source = options.currentWallpaper.source;
-    
+
                     // Retrieve mediaItem again to get new baseUrl
                     window.eel.get_media_item(options.currentWallpaper.id)(mediaItem => {
                         mediaItem.source = source;
@@ -110,15 +109,15 @@ export const store = new Vuex.Store({
                 });
             });
         },
-        setSchedule (context, { interval, unit }) {
-            return new Promise(( res ) => {
+        setSchedule(context, { interval, unit }) {
+            return new Promise((res) => {
                 window.eel.set_schedule(interval, unit)(() => {
                     res();
                 });
             });
         },
-        setSelectedAlbums (context, { selectedAlbums }) {
-            return new Promise(( res ) => {
+        setSelectedAlbums(context, { selectedAlbums }) {
+            return new Promise((res) => {
                 window.eel.set_selected_albums(selectedAlbums)(() => {
                     res();
                 });

@@ -3,6 +3,7 @@ import os
 
 from src.google_api import GoogleApi
 from src.helpers import resource_path, find_in_list_by_val
+import pyautogui
 
 OPTIONS_PATH = resource_path('storage/options.json')
 FAVORITES = 'FAVORITES'

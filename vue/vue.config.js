@@ -4,5 +4,5 @@ module.exports = {
   outputDir: path.resolve(__dirname, '../web'),
   transpileDependencies: [
     'vuetify'
-  ]
+  ],
 }
