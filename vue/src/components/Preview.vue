@@ -1,59 +1,61 @@
 <template lang="pug">
-v-row.mb-12.align-center
-  v-col(cols='5')
-    v-card.round(elevation='22')
-      v-skeleton-loader(type='image' v-if='!options.currentWallpaper.baseUrl')
-      v-img.round(v-if='options.currentWallpaper.baseUrl' :src='options.currentWallpaper.baseUrl' max-height='350')
+.d-flex.flex-column.flex-sm-row.mb-12
+  .d-flex.justify-center
+    v-skeleton-loader(type='image' v-if='!options.currentWallpaper.baseUrl')
+    v-img.round.elevation-22(v-if='options.currentWallpaper.baseUrl' :src='options.currentWallpaper.baseUrl' max-height='300' max-width='50vw')
 
   //- Current item details
-  v-col.pb-5(cols='7')
-    .pa-5
-      v-skeleton-loader(type='sentences, heading' v-if='!options.currentWallpaper.source')
-      div(v-if='options.currentWallpaper.source')
-        h3.headline.font-weight-bold Current wallpaper
-        
-        v-breadcrumbs.px-1.pt-1.pb-2(:items='breadcrumbs')
-          template(v-slot:divider)
-            v-icon mdi-arrow-right
+  .py-5.pa-sm-8
+    v-skeleton-loader(type='sentences, heading' v-if='!options.currentWallpaper.source')
+    div(v-if='options.currentWallpaper.source')
+      h3.headline.font-weight-bold Current wallpaper
+      
+      v-breadcrumbs.px-1.pt-1.pb-2(:items='breadcrumbs')
+        template(v-slot:divider)
+          v-icon mdi-arrow-right
 
-        div
-          v-btn.ma-1(
-            outlined
-            @click='setWallpaperByDirection("prev")'
-            :loading='loadingPrev'
-          ) Previous
+      .d-flex(style='grid-gap: 8px')
+        v-btn(
+          outlined
+          @click='setWallpaperByDirection("prev")'
+          :loading='loadingPrev'
+        )
+          v-icon.mr-1 mdi-arrow-left
 
-          v-btn.ma-1(
-            outlined
-            @click='setWallpaperByDirection("next")'
-            :loading='loadingNext'
-          ) Next
+        v-btn(
+          outlined
+          @click='setWallpaperRandom()'
+          :loading='loadingRandom'
+        )
+          v-icon.mr-1 mdi-shuffle-variant
 
-          v-btn.ma-1(
-            outlined
-            @click='setWallpaperRandom()'
-            :loading='loadingRandom'
-          ) Random
-        .d-flex.align-center.my-3
-          span.mr-1 Update every
-          v-text-field.shrink.mx-1.hide-arrows(
-            outlined
-            dense
-            hide-details
-            type='number'
-            v-model='options.schedule.interval'
-            style='width: 65px'
-            @change='setSchedule'
-          )
-          v-select.shrink.mx-1(
-            outlined
-            dense
-            hide-details
-            :items='["minutes", "hours", "days", "weeks"]'
-            v-model='options.schedule.unit'
-            style='width: 120px'
-            @change='setSchedule'
-          )
+        v-btn(
+          outlined
+          @click='setWallpaperByDirection("next")'
+          :loading='loadingNext'
+        )
+          v-icon.mr-1 mdi-arrow-right
+
+      .d-flex.align-center.my-3
+        span.mr-1 Update every
+        v-text-field.shrink.mx-1.hide-arrows(
+          outlined
+          dense
+          hide-details
+          type='number'
+          v-model='options.schedule.interval'
+          style='width: 65px'
+          @change='setSchedule'
+        )
+        v-select.shrink.mx-1(
+          outlined
+          dense
+          hide-details
+          :items='["minutes", "hours", "days", "weeks"]'
+          v-model='options.schedule.unit'
+          style='width: 120px'
+          @change='setSchedule'
+        )
 </template>
 
 <script>
