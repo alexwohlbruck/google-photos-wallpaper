@@ -10,8 +10,9 @@ import time
 
 from src.scheduler import Scheduler
 from src.options import Options
+from src.wallpaper import Wallpaper
 import src.bridge
-from src.resource_path import resource_path
+from src.helpers import resource_path
 
 from pyupdater.client import Client
 from src.lib.client_config import ClientConfig
@@ -21,10 +22,10 @@ APP_VERSION = '0.0.1'
 
 # Pyupdater download status callback
 def print_status_info(info):
-    total = info.get(u'total')
-    downloaded = info.get(u'downloaded')
-    status = info.get(u'status')
-    print(downloaded, total, status)
+	total = info.get(u'total')
+	downloaded = info.get(u'downloaded')
+	status = info.get(u'status')
+	print(downloaded, total, status)
 
 # print('Initializing client')
 # client = Client(
@@ -61,15 +62,15 @@ def run_systray_icon():
 		),
 		pystray.MenuItem(
 			text = 'Next photo',
-			action = Options.set_wallpaper_next
+			action = Wallpaper.set_wallpaper_next
 		),
 		pystray.MenuItem(
 			text = 'Previous photo',
-			action = Options.set_wallpaper_prev
+			action = Wallpaper.set_wallpaper_prev
 		),
 		pystray.MenuItem(
 			text = 'Random photo',
-			action = Options.set_wallpaper_random
+			action = Wallpaper.set_wallpaper_random
 		)
 	)
 		

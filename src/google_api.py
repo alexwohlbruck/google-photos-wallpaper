@@ -8,7 +8,7 @@ from google_auth_oauthlib.flow import Flow
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
-from src.resource_path import resource_path
+from src.helpers import resource_path
 
 PICKLE_PATH = resource_path('storage/token.pickle')
 

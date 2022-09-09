@@ -3,6 +3,7 @@ import time
 import schedule
 
 from src.options import Options
+from src.wallpaper import Wallpaper
 
 WALL_SCHEDULE = 'WALL_SCHEDULE'
 options = Options.get_user_options()
@@ -42,7 +43,7 @@ class Scheduler():
 
 		# TODO: Dynaimcally choose unit to schedule on
 		job = getattr(schedule.every(interval), unit)
-		job.do(Options.set_wallpaper_random).tag(WALL_SCHEDULE)
+		job.do(Wallpaper.set_wallpaper_random).tag(WALL_SCHEDULE)
 
 		Options.set_schedule(interval, unit)
 	
