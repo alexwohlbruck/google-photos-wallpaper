@@ -7,21 +7,14 @@
 					p.pa-2 {{ appLoading }}
 
 			v-content
-				v-container.d-flex.flex-column.flex-md-row.gap-2
-					current-wallpaper.flex-1.mt-4
-					album-selector.flex-1.mt-4
+				router-view
+					
 </template>
 
 <script>
-import CurrentWallpaper from '@/components/CurrentWallpaper.vue';
-import AlbumSelector from '@/components/AlbumSelector.vue';
 
 export default {
 	name: 'App',
-	components: {
-		CurrentWallpaper,
-		AlbumSelector,
-	},
 	computed: {
 		wallpaperUrl() {
 			return this.$store.state.options?.currentWallpaper?.baseUrl;
@@ -71,5 +64,6 @@ export default {
 
 	.blur {
 		backdrop-filter: blur(30px) saturate(4) contrast(.4) brightness(.9);
+		min-height: 100vh;
 	}
 </style>

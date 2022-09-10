@@ -3,16 +3,13 @@ v-skeleton-loader(
   type='list-item@10'
   :loading='!(favorites.length && albums.length)'
 )
-  h3.subtitle-1.font-weight-bold.ma-3 Selected albums
+  h3.subtitle-1.font-weight-bold.ma-3 My albums
 
   v-container
     v-row(dense)
       v-col(cols='6' sm='4' xl='3' v-for='album in albumsIncludingFavorites' :key='album.id')
         v-card.album(
-          :to='{ name: "album", params: { id: album.id } }'
-          :href='album.url'
-          target='_blank'
-          rel='noopener'
+          :to='{ name: "album", params: { albumId: album.id } }'
           :color='album.color'
         )
           v-img(
@@ -37,57 +34,15 @@ v-skeleton-loader(
             
             .scrim(:class='{ light: album.icon }')
               v-card-title.body-2 {{ album.title }}
-              v-card-subtitle.caption {{ album.mediaItemsCount }} items
+              v-card-subtitle.caption(v-if='! album.icon') {{ album.mediaItemsCount }} items
 
-  v-expansion-panels.albums(accordion multiple light)
-    //- Favorites panel
-    v-expansion-panel
-      v-expansion-panel-header.py-0(v-slot='open')
-        v-layout
-          v-checkbox(
-            v-model='options.selectedAlbums'
-            label='Favorites'
-            value='FAVORITES'
-            @change='setSelectedAlbums'
-            @click.native='preventExpansion'
-          )
-      v-expansion-panel-content
-        media-items(:media-items='favorites' :source='{id: "FAVORITES", title: "Favorites"}')
-        
-
-    //- Album panels list           
-    v-expansion-panel(
-      v-for='album in albums'
-      :key='album.id'
-      @change='loadAlbum(album.id)'
-    )
-      v-expansion-panel-header.py-0(v-slot='open')
-        v-layout
-          v-checkbox(
-            v-model='options.selectedAlbums'
-            :label='album.title'
-            :value='album.id'
-            @change='setSelectedAlbums'
-            @click.native='cancelBubble'
-          )
-      v-expansion-panel-content
-        v-skeleton-loader(type='image' :loading='!album.mediaItems')
-          media-items(
-            :media-items='album.mediaItems'
-            :source='album'
-            :disabled='!options.selectedAlbums.find(a => a == album.id)'
-          )
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import MediaItems from '@/components/MediaItems.vue';
 
 export default {
-  name: 'AlbumSelector',
-  components: {
-    MediaItems
-  },
+  name: 'Albums',
   computed: {
 		...mapState([
 			'options',
@@ -115,12 +70,6 @@ export default {
 		},
     openAlbum: function(album) {
       // Open album in new tab
-      alert('clicked');
-      console.log(album);
-    },
-    selectAlbum: function(album) {
-      // Select album
-      alert('selected');
       console.log(album);
     },
 		loadAlbum: function(albumId) {
