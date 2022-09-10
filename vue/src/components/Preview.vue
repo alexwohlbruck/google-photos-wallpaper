@@ -1,5 +1,5 @@
 <template lang="pug">
-div
+.preview
   v-skeleton-loader(type='image' v-if='!imageUrl')
   v-img.round.elevation-22(
     v-else
@@ -55,13 +55,17 @@ export default {
     .apple-logo {
       margin-left: 4%;
       margin-right: 1%;
-      font-size: max(1.5vw, 5px) !important;
+      font-size: 1.5vw !important;
+
+      @media (min-width: 960px) {
+        font-size: .6rem !important;
+      }
     }
 
     .menu-item {
       width: 5px;
       height: 20%;
-      margin: 0 5px;
+      margin: 0 2%;
       background-color: rgba(255, 255, 255, .5);
       border-radius: 5px;
 

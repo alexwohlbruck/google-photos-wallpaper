@@ -5,7 +5,7 @@ v-skeleton-loader(
 )
   h3.subtitle-1.font-weight-bold.ma-3 Selected albums
 
-  v-expansion-panels.albums(accordion multiple)
+  v-expansion-panels.albums(accordion multiple light)
     //- Favorites panel
     v-expansion-panel
       v-expansion-panel-header.py-0(v-slot='open')

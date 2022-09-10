@@ -2,7 +2,7 @@
   //- A grid of media item thumbnails that can be selected to set the wallpaper
   v-row
     v-col.pa-1(
-      cols='3' sm='2' md='1'
+      cols='3' sm='2' md='3' lg='2'
       v-for='mediaItem in mediaItems'
       :key='mediaItem.id'
     )

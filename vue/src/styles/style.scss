@@ -1,0 +1,37 @@
+@font-face {
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 700;
+    src: url('../assets/PlusJakartaSans-Bold.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'Plus Jakarta Sans';
+    font-weight: 900;
+    src: url('../assets/PlusJakartaSans-ExtraBold.woff2') format('woff2');
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+body::-webkit-scrollbar {
+    display: none;
+}
+/* Hide scrollbar for IE and Edge */
+body {
+    -ms-overflow-style: none;
+}
+
+.flex-1 {
+    flex: 1;
+}
+.gap-half {
+    gap: 0.5rem;
+}
+.gap-1 {
+    gap: 1rem;
+}
+.gap-2 {
+    gap: 2rem;
+}
+
+.v-card, .v-expansion-panel {
+    background: rgba(255, 255, 255, .85) !important;
+}

@@ -1,14 +1,14 @@
 <template lang="pug">
-.mb-12
+.current-wallpaper.mb-12
   //- Current item details
   v-skeleton-loader(type='sentences, heading' v-if='!options.currentWallpaper.source')
 
-  .d-flex.flex-column(v-if='options.currentWallpaper.source' style='grid-gap: 15px')
+  .d-flex.flex-column.gap-1(v-if='options.currentWallpaper.source')
     
     div
-      h3.headline.font-weight-bold Current wallpaper
+      h3.headline.font-weight-black Current wallpaper
       
-      v-breadcrumbs.px-1.py-0(:items='breadcrumbs')
+      v-breadcrumbs.path.px-1.py-0(:items='breadcrumbs')
         template(v-slot:divider)
           v-icon mdi-chevron-right
       
@@ -17,32 +17,35 @@
       :aspect-ratio='displayAspectRatio'
     )
 
-    .d-flex(style='grid-gap: 8px')
-      v-btn(
+    .d-flex.gap-half
+      v-btn.flex-1(
         outlined
         @click='setWallpaperByDirection("prev")'
         :loading='loadingPrev'
       )
-        v-icon.mr-1 mdi-arrow-left
+        v-icon.mr-1(left) mdi-arrow-left
+        span(v-if='$vuetify.breakpoint.smAndUp') Previous
 
-      v-btn(
+      v-btn.flex-1(
         outlined
         @click='setWallpaperRandom()'
         :loading='loadingRandom'
       )
-        v-icon.mr-1 mdi-shuffle
+        span(v-if='$vuetify.breakpoint.smAndUp') Random
+        v-icon.mr-1(right) mdi-shuffle
 
-      v-btn(
+      v-btn.flex-1(
         outlined
         @click='setWallpaperByDirection("next")'
         :loading='loadingNext'
       )
-        v-icon.mr-1 mdi-arrow-right
+        span(v-if='$vuetify.breakpoint.smAndUp') Next
+        v-icon.mr-1(right) mdi-arrow-right
 
     .d-flex.flex-column
       h4.text-h4.mb-2 Update every
-      .d-flex.align-center
-        v-text-field.shrink.mx-1(
+      .d-flex.align-center.gap-half
+        v-text-field.shrink(
           outlined
           dense
           hide-details
@@ -53,7 +56,7 @@
           min='1'
           step='1'
         )
-        v-select.shrink.mx-1(
+        v-select.shrink(
           outlined
           dense
           hide-details
@@ -138,3 +141,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.current-wallpaper {
+  overflow: visible !important;
+}
+
+.path {
+  .v-breadcrumbs__divider {
+    padding: 0 .3em !important;
+  }
+}
+</style>
