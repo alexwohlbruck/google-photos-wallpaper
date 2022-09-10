@@ -92,7 +92,7 @@ export default {
     justify-content: center;
     height: 8%;
     width: 66%;
-    bottom: 0;
+    bottom: 1%;
     left: 50%;
     transform: translateX(-50%);
     border-radius: 10px;
