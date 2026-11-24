@@ -1,0 +1,17 @@
+[workspace]
+resolver = "2"
+members = ["core", "uniffi-bindgen"]
+# apps/linux is its own crate so GTK isn't required to build the core on macOS/Windows.
+exclude = ["apps/linux"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+uniffi = "0.32"
+
+[profile.release]
+lto = true
+strip = true

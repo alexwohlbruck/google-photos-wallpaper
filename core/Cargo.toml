@@ -1,0 +1,28 @@
+[package]
+name = "pinwheel-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Shared core for Pinwheel: sources, cache, scheduling, Google Photos Picker, wallpaper setting."
+
+[lib]
+name = "pinwheel_core"
+crate-type = ["lib", "staticlib", "cdylib"]
+
+[dependencies]
+uniffi.workspace = true
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+thiserror = "2"
+directories = "6"
+ureq = { version = "3", features = ["json"] }
+urlencoding = "2"
+walkdir = "2"
+imagesize = "0.15"
+fastrand = "2"
+getrandom = "0.3"
+sha2 = "0.10"
+base64 = "0.22"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = ["Win32_UI_WindowsAndMessaging"] }
